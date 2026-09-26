@@ -34,7 +34,7 @@ Tested on JVC/Vestel (MediaTek), Android 14, with a DVB tuner and a custom TV in
 Parental controls/content ratings, HDMI-CEC, system properties, TvProvider search, built-in tuner (JNI),
 cloud EPG, analytics, developer options. Channel lock with PIN and DVR are kept.
 
-### Fixed for MediaTek TVs (verified by logs)
+### Fixed Bugs and Annoyances
 - **App always jumped to setup:** Without system permissions all channels were treated as hidden.
 - **Audio kept dropping (subtitles):** The tuner reports "no subtitle" as track `255`, the app deselected it endlessly. On top of that "subtitles off" was sent several times per second.
 - **Audio stuttering (audio track):** The tuner reports channel count/language only for the active track, so the automatic selection kept jumping between two tracks.
