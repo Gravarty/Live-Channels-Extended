@@ -58,7 +58,14 @@ class TrackController(
     @JvmOverloads
     fun applyMultiAudio(allowAutoSelection: Boolean = false, trackId: String?) {
         if (!allowAutoSelection && trackId == null) {
-            selectTrack(TvTrackInfo.TYPE_AUDIO, null, UNDEFINED_TRACK_INDEX)
+            // Bugfix: Nur abwählen, wenn wirklich eine Tonspur aktiv ist. Nach einer Stream-Info-Meldung ohne
+            // gewählte Tonspur (z. B. Untertitel-Meldung direkt nach dem Tunen) schickte das Original ein
+            // überflüssiges "Tonspur abwählen". Der MediaTek-Tuner (JVC/Vestel) stürzt dabei ab
+            // (SIGSEGV in a_mtktvapi_select_audio via unselectAudio, per Log belegt), v. a. nachdem der
+            // TV-eigene Player den Tuner benutzt hat.
+            if (getSelectedTrack(TvTrackInfo.TYPE_AUDIO) != null) {
+                selectTrack(TvTrackInfo.TYPE_AUDIO, null, UNDEFINED_TRACK_INDEX)
+            }
             optionsManager.onMultiAudioChanged(null)
             return
         }
