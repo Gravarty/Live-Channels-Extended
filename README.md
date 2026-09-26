@@ -41,6 +41,7 @@ cloud EPG, analytics, developer options. Channel lock with PIN and DVR are kept.
 - **Tuner lost after using the TV's own player:** After the tuner reported "no subtitle", the app sent "deselect audio track" although none was selected. The MediaTek tuner service crashed on that (`a_mtktvapi_select_audio`), playback kept buffering.
 - **No sound after using the TV's own player:** The TV's player keeps running in the background and requests audio focus on every tune. The original muted on that focus loss even while in the foreground.
 - **UI cut off at the top:** Channel banner and channel list were clipped at the top edge (also in Google's Live Channels). Android reported a too-large transparent region for the window because of the video SurfaceView, so SurfaceFlinger cropped the window. The window is now reported as fully non-transparent. This also fixes the "ghost" info banner that stayed visible after closing the program guide.
+- **Info banner darkened by the menu:** The menu's dark gradient was drawn over the channel banner, so its lower text was hard to read. The banner is now drawn above the menu.
 
 ### More bugs fixed from the original (selection)
 - Many crashes (NPE) on missing channels, programs, inputs or recordings, mainly in DVR, program guide and menu

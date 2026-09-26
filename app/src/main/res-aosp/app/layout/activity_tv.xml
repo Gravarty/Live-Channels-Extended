@@ -29,12 +29,13 @@
         android:layout_height="match_parent"
         android:layout_gravity="start|center_vertical" />
 
+    <include layout="@layout/menu" />
+
+    <!-- Bugfix: Szenen (Kanal-Banner) über dem Menü, sonst dunkelt dessen Verlauf das Banner ab -->
     <FrameLayout
         android:id="@+id/scene_container"
         android:layout_height="match_parent"
         android:layout_width="match_parent" />
-
-    <include layout="@layout/menu" />
     <include layout="@layout/option_container" />
     <include layout="@layout/program_guide" />
     <FrameLayout android:id="@+id/fragment_container"
