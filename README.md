@@ -44,6 +44,7 @@ cloud EPG, analytics, developer options. Channel lock with PIN and DVR are kept.
 - **UI cut off at the top:** Channel banner and channel list were clipped at the top edge (also in Google's Live Channels). Android reported a too-large transparent region for the window because of the video SurfaceView, so SurfaceFlinger cropped the window. The window is now reported as fully non-transparent. This also fixes the "ghost" info banner that stayed visible after closing the program guide.
 - **Info banner darkened by the menu:** The menu's dark gradient was drawn over the channel banner, so its lower text was hard to read. The banner is now drawn above the menu.
 - **Pause kept the player controls on screen:** While paused, the menu could not be closed without resuming playback. Now the controls hide after the normal timeout and Back closes them without resuming.
+- **Repeated TvProvider column check:** Without system rights the TvProvider never answers the series-ID column query, so the original retried it (two IPC calls under a lock) on every program query. It is now checked once per app start.
 
 ### More bugs fixed from the original (selection)
 - Many crashes (NPE) on missing channels, programs, inputs or recordings, mainly in DVR, program guide and menu

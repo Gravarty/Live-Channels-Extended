@@ -28,6 +28,12 @@ object TvProviderUtils {
     private var recordedProgramHasSeriesIdColumn = false
     private var recordedProgramHasStateColumn = false
 
+    // Bugfix: Ohne Systemrechte liefert TvProvider für get_columns null. Das Original prüfte dann bei jeder
+    // Programm-Abfrage erneut (2 IPCs unter Sperre); jetzt nur einmal pro Prozess.
+    private var programSeriesIdColumnChecked = false
+    private var recordedProgramSeriesIdColumnChecked = false
+    private var recordedProgramStateColumnChecked = false
+
     // Ab Android O (minSdk 30) darf die App Spalten anlegen – Partner-Flag entfällt.
 
     @JvmStatic
@@ -39,7 +45,8 @@ object TvProviderUtils {
 
     @Synchronized
     private fun checkProgramTableSeriesIdColumn(context: Context, uri: Uri): Boolean {
-        if (!programHasSeriesIdColumn) {
+        if (!programSeriesIdColumnChecked) {
+            programSeriesIdColumnChecked = true
             programHasSeriesIdColumn = ensureColumn(context, uri, EXTRA_PROGRAM_COLUMN_SERIES_ID)
         }
         return programHasSeriesIdColumn
@@ -47,7 +54,8 @@ object TvProviderUtils {
 
     @Synchronized
     private fun checkRecordedProgramTableSeriesIdColumn(context: Context, uri: Uri): Boolean {
-        if (!recordedProgramHasSeriesIdColumn) {
+        if (!recordedProgramSeriesIdColumnChecked) {
+            recordedProgramSeriesIdColumnChecked = true
             recordedProgramHasSeriesIdColumn = ensureColumn(context, uri, EXTRA_PROGRAM_COLUMN_SERIES_ID)
         }
         return recordedProgramHasSeriesIdColumn
@@ -58,7 +66,8 @@ object TvProviderUtils {
     @Synchronized
     fun checkStateColumn(context: Context, uri: Uri): Boolean {
         if (!Utils.isRecordedProgramsUri(uri)) return false
-        if (!recordedProgramHasStateColumn) {
+        if (!recordedProgramStateColumnChecked) {
+            recordedProgramStateColumnChecked = true
             recordedProgramHasStateColumn = ensureColumn(context, uri, EXTRA_PROGRAM_COLUMN_STATE)
         }
         return recordedProgramHasStateColumn
