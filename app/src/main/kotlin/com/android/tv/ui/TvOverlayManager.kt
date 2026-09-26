@@ -296,13 +296,13 @@ class TvOverlayManager(
         keypadChannelSwitchView?.onNumberKeyUp(keyCode - KeyEvent.KEYCODE_0)
     }
 
-    /** Tweak: Senderliste per Hoch/Runter, aktueller Sender vorausgewählt, Umschalten erst mit OK. */
-    fun showKeypadChannelBrowse() {
+    /** Tweak: Senderliste per Hoch/Runter, Nachbarsender vorausgewählt, Umschalten erst mit OK. */
+    fun showKeypadChannelBrowse(up: Boolean) {
         if (!channelTuner.areAllChannelsLoaded()) return
         hideOverlays(FLAG_HIDE_OVERLAYS_KEEP_SCENE or FLAG_HIDE_OVERLAYS_KEEP_SIDE_PANELS or
             FLAG_HIDE_OVERLAYS_KEEP_DIALOG or FLAG_HIDE_OVERLAYS_KEEP_FRAGMENT)
         transitionManager.goToKeypadChannelSwitchScene()
-        keypadChannelSwitchView?.startBrowse(channelTuner.currentChannel)
+        keypadChannelSwitchView?.startBrowse(channelTuner.currentChannel, if (up) -1 else 1)
     }
 
     fun showSelectInputView() {

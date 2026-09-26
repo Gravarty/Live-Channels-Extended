@@ -106,7 +106,7 @@ class KeyHandler(
             if ((keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_DOWN) &&
                 Tweaks.isDpadChannelList(activity) && channelTuner.browsableChannelCount > 0
             ) {
-                if (event.repeatCount == 0) overlayManager.showKeypadChannelBrowse()
+                if (event.repeatCount == 0) overlayManager.showKeypadChannelBrowse(keyCode == KeyEvent.KEYCODE_DPAD_UP)
                 return true
             }
             when (keyCode) {

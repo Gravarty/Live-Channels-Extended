@@ -149,15 +149,19 @@ class KeypadChannelSwitchView @JvmOverloads constructor(
 
     fun setChannels(channels: List<Channel>?) { this.channels = channels }
 
-    /** Tweak: alle Kanäle zeigen, [current] vorauswählen. Umschalten nur mit OK. */
-    fun startBrowse(current: Channel?) {
+    /**
+     * Tweak: alle Kanäle zeigen, den Nachbarn von [current] in Richtung [step] (-1 = hoch, +1 = runter)
+     * vorauswählen, damit der erste Tastendruck schon zählt. Umschalten nur mit OK.
+     */
+    fun startBrowse(current: Channel?, step: Int) {
         browseMode = true
         channelNumberView.visibility = GONE // ohne große Nummer oben
         channelCandidates.clear()
         channelCandidates.addAll(channels.orEmpty())
         adapter.notifyDataSetChanged()
         if (adapter.count > 0) {
-            val position = channelCandidates.indexOfFirst { it.id == current?.id }.coerceAtLeast(0)
+            val currentIndex = channelCandidates.indexOfFirst { it.id == current?.id }
+            val position = if (currentIndex < 0) 0 else Math.floorMod(currentIndex + step, adapter.count)
             channelItemListView.requestFocus()
             channelItemListView.setSelection(position)
             selectedChannel = channelCandidates[position]
