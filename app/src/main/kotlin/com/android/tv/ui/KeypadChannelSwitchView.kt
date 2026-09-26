@@ -161,7 +161,7 @@ class KeypadChannelSwitchView @JvmOverloads constructor(
         adapter.notifyDataSetChanged()
         if (adapter.count > 0) {
             val currentIndex = channelCandidates.indexOfFirst { it.id == current?.id }
-            val position = if (currentIndex < 0) 0 else Math.floorMod(currentIndex + step, adapter.count)
+            val position = if (currentIndex < 0) 0 else (currentIndex + step).coerceIn(0, adapter.count - 1)
             channelItemListView.requestFocus()
             channelItemListView.setSelection(position)
             selectedChannel = channelCandidates[position]
