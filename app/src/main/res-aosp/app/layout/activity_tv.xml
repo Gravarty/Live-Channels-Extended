@@ -17,7 +17,8 @@
 
 <!-- Foreground is the transparent color. Without the foreground, UIs above SurfaceView
      sometimes show some artifacts. -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Bugfix: OpaqueRootFrameLayout statt FrameLayout (siehe Klasse) -->
+<com.android.tv.ui.OpaqueRootFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:foreground="@android:color/transparent"
@@ -39,4 +40,4 @@
     <FrameLayout android:id="@+id/fragment_container"
         android:layout_height="match_parent"
         android:layout_width="match_parent"/>
-</FrameLayout>
+</com.android.tv.ui.OpaqueRootFrameLayout>
