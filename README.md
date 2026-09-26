@@ -12,7 +12,7 @@ Neue Funktionen sind im Code mit `Extended:` markiert, Texte liegen in `strings-
 
 Kotlin-Portierung der AOSP-App **Live Channels** (Live TV), 1:1 nach dem Original
 [LineageOS/android_packages_apps_TV](https://github.com/LineageOS/android_packages_apps_TV) (Branch `lineage-21.0`).
-Keine eigenen Features. Jede Abweichung vom Original ist im Code kommentiert, behobene Fehler sind mit `Bugfix:` markiert.
+Die Basis enthält keine eigenen Features. Jede Abweichung vom Original ist im Code kommentiert, behobene Fehler sind mit `Bugfix:` markiert.
 
 Getestet auf JVC/Vestel (MediaTek), Android 14, mit DVB-Tuner und einer eigenen TV-Input-App.
 
