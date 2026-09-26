@@ -21,4 +21,7 @@
     <string name="tweak_ok_opens_guide_description">OK lang drücken öffnet das Menü</string>
     <string name="tweak_hide_provider_logo">Provider-Logo verstecken</string>
     <string name="tweak_hide_provider_logo_description">Blendet das App-Symbol des Senderanbieters im Kanal-Banner und in der Programmübersicht aus</string>
+    <string name="tweak_confirm_exit">Bestätigen zum Beenden</string>
+    <string name="tweak_confirm_exit_description">Zum Beenden der App zweimal Zurück drücken</string>
+    <string name="tweak_confirm_exit_toast">Erneut drücken, um zu beenden.</string>
 </resources>

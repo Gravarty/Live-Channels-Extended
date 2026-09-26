@@ -21,4 +21,7 @@
     <string name="tweak_ok_opens_guide_description">Long-press OK opens the menu</string>
     <string name="tweak_hide_provider_logo">Hide provider logo</string>
     <string name="tweak_hide_provider_logo_description">Hides the TV input app icon in the channel banner and program guide</string>
+    <string name="tweak_confirm_exit">Confirm to exit</string>
+    <string name="tweak_confirm_exit_description">Press Back twice to close the app</string>
+    <string name="tweak_confirm_exit_toast">Press again to exit.</string>
 </resources>

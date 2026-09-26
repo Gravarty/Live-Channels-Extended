@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.os.SystemClock
 import android.view.InputEvent
 import android.view.KeyEvent
 import android.util.Log
@@ -50,6 +51,10 @@ class KeyHandler(
 
     // Tweak: true, sobald OK-Langdruck das Menü geöffnet hat; restliche OK-Events bis ACTION_UP werden verworfen
     private var okLongPressHandled = false
+
+    // Tweak: Bestätigen zum Beenden
+    private var lastExitBackPressMs = 0L
+    private var exitToast: Toast? = null
 
     fun onPause() { backKeyPressed = false }
 
@@ -184,6 +189,18 @@ class KeyHandler(
             return null
         }
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // Tweak: Bestätigen zum Beenden – erst der zweite Druck innerhalb von 2 s beendet die App
+            if (Tweaks.isConfirmExit(activity)) {
+                val now = SystemClock.uptimeMillis()
+                if (now - lastExitBackPressMs > CONFIRM_EXIT_WINDOW_MS) {
+                    lastExitBackPressMs = now
+                    exitToast?.cancel()
+                    exitToast = Toast.makeText(activity, R.string.tweak_confirm_exit_toast, Toast.LENGTH_SHORT).also { it.show() }
+                    return true
+                }
+                exitToast?.cancel()
+                lastExitBackPressMs = 0L
+            }
             // Enthält Aufräumarbeiten für das Verlassen der App
             activity.onBackPressedDispatcher.onBackPressed()
             return true
@@ -337,6 +354,8 @@ class KeyHandler(
 
     companion object {
         private const val TAG = "KeyHandler"
+        // Tweak: Bestätigen zum Beenden
+        private const val CONFIRM_EXIT_WINDOW_MS = 2000L
         private const val PERMISSION_MODIFY_PARENTAL_CONTROLS = "android.permission.MODIFY_PARENTAL_CONTROLS"
         private const val CHANNEL_CHANGE_NORMAL_SPEED_DURATION_MS = 3000L
         private const val CHANNEL_CHANGE_DELAY_MS_IN_MAX_SPEED = 50L

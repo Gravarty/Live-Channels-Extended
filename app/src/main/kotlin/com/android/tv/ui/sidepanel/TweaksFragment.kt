@@ -84,5 +84,20 @@ class TweaksFragment : SideFragment<Item>() {
                 Tweaks.setProviderLogoHidden(requireContext(), isChecked)
             }
         },
+        // Tweak: Bestätigen zum Beenden
+        object : SwitchItem(
+            getString(R.string.tweak_confirm_exit), getString(R.string.tweak_confirm_exit),
+            getString(R.string.tweak_confirm_exit_description),
+        ) {
+            override fun onUpdate() {
+                super.onUpdate()
+                setChecked(Tweaks.isConfirmExit(requireContext()))
+            }
+
+            override fun onSelected() {
+                super.onSelected()
+                Tweaks.setConfirmExit(requireContext(), isChecked)
+            }
+        },
     )
 }

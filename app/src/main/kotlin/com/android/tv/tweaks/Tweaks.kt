@@ -24,6 +24,9 @@ object Tweaks {
     // Tweak: Provider-Logo (Icon des TV-Inputs) im Kanal-Banner und in der Programmübersicht ausblenden
     private const val KEY_HIDE_PROVIDER_LOGO = "hide_provider_logo"
 
+    // Tweak: Zurück muss zum Beenden zweimal gedrückt werden
+    private const val KEY_CONFIRM_EXIT = "confirm_exit"
+
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
     fun isGuideGenresHidden(context: Context): Boolean = prefs(context).getBoolean(KEY_HIDE_GUIDE_GENRES, false)
@@ -50,4 +53,9 @@ object Tweaks {
 
     fun setProviderLogoHidden(context: Context, hidden: Boolean) =
         prefs(context).edit().putBoolean(KEY_HIDE_PROVIDER_LOGO, hidden).apply()
+
+    fun isConfirmExit(context: Context): Boolean = prefs(context).getBoolean(KEY_CONFIRM_EXIT, false)
+
+    fun setConfirmExit(context: Context, enabled: Boolean) =
+        prefs(context).edit().putBoolean(KEY_CONFIRM_EXIT, enabled).apply()
 }

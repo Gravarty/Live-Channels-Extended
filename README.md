@@ -16,6 +16,7 @@ New features are marked with `Extended:` in the code, their strings live in `str
   - *Up/down opens channel list:* D-pad up/down opens the channel list instead of zapping, with the channel above/below already selected (stops at the first/last channel). Pick a channel, OK switches. Back or 5 s without input closes it.
   - *OK opens program guide:* OK opens the program guide directly. Long-press OK opens the menu (for remotes without a menu key).
   - *Hide provider logo:* hides the TV input app icon (e.g. TVHeadend) in the channel banner and the program guide.
+  - *Confirm to exit:* the first Back press shows a hint, a second press within 2 s closes the app.
 
 ## Base
 
