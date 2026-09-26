@@ -219,9 +219,14 @@ class KeypadChannelSwitchView @JvmOverloads constructor(
     }
 
     private fun updateViewHeight() {
-        // Tweak: im Browse-Modus ohne Nummernzeile nur die Innenabstände
-        val base = if (browseMode) paddingTop + paddingBottom else baseViewHeight
-        val targetHeight = base + itemHeight * min(MAX_CHANNEL_ITEM, adapter.count)
+        val targetHeight = if (browseMode) {
+            // Tweak: im Browse-Modus ohne Nummernzeile, Liste bis zum unteren Rand (gleicher Abstand wie oben)
+            val lp = layoutParams as MarginLayoutParams
+            val maxHeight = (parent as? View)?.height?.takeIf { it > 0 }?.let { it - 2 * lp.topMargin } ?: Int.MAX_VALUE
+            min(paddingTop + paddingBottom + itemHeight * adapter.count, maxHeight)
+        } else {
+            baseViewHeight + itemHeight * min(MAX_CHANNEL_ITEM, adapter.count)
+        }
         resizeAnimator?.cancel()
         resizeAnimator = null
         if (currentHeight == 0) {
