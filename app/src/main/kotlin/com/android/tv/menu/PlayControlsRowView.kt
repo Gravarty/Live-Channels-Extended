@@ -247,9 +247,10 @@ class PlayControlsRowView @JvmOverloads constructor(
         SoftPreconditions.checkArgument(programStartTimeMs <= programEndTimeMs, TAG, "invalid program times")
     }
 
-    /** Menü bleibt offen, solange nicht normal abgespielt wird. */
+    /** Menü bleibt offen, solange gespult wird. */
     private fun updateMenuVisibility() {
-        menu?.setKeepVisible(timeShiftManager.isAvailable && !timeShiftManager.isNormalPlaying)
+        // Bugfix: Original hielt das Menü auch während der Pause dauerhaft offen; jetzt blendet es normal aus
+        menu?.setKeepVisible(timeShiftManager.isAvailable && !timeShiftManager.isNormalPlaying && !timeShiftManager.isPaused)
     }
 
     fun onPreselected() = updateControls(true)

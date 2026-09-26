@@ -478,7 +478,7 @@ class TvOverlayManager(
 
     private fun handleOverlayClosed() {
         if (!canExecuteCloseAction()) return
-        if (showMenuWithTimeShiftPauseIfNeeded()) return
+        // Bugfix: bei Pause das Menü nach dem Schließen anderer Overlays nicht mehr erzwingen
         if (pendingActions.isNotEmpty()) pendingActions.removeAt(0).run()
     }
 
@@ -546,8 +546,7 @@ class TvOverlayManager(
         }
         if (menu.isActive || transitionManager.isSceneActive) {
             if (keyCode == KeyEvent.KEYCODE_BACK) {
-                val tsm = mainActivity.timeShiftManager
-                if (tsm.isPaused) tsm.play()
+                // Bugfix: Zurück setzt eine Pause nicht mehr fort (Original rief hier play() auf)
                 hideOverlays(FLAG_HIDE_OVERLAYS_KEEP_SIDE_PANELS or FLAG_HIDE_OVERLAYS_KEEP_DIALOG or
                     FLAG_HIDE_OVERLAYS_KEEP_FRAGMENT)
                 return MainActivity.KEY_EVENT_HANDLER_RESULT_HANDLED
