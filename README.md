@@ -1,49 +1,49 @@
 # Live Channels Extended
 
-Erweiterte Version von [AOSP Live TV Kotlin](https://github.com/Gravarty/AOSP-Live-TV-Kotlin).
-Neue Funktionen sind im Code mit `Extended:` markiert, Texte liegen in `strings-extended.xml`.
+Extended version of [AOSP Live TV Kotlin](https://github.com/Gravarty/AOSP-Live-TV-Kotlin).
+New features are marked with `Extended:` in the code, their strings live in `strings-extended.xml`.
 
-## Neu in Extended
-- **Quelle:** Tile in den TV-Optionen. Trennt die Kanalliste nach Tuner/Service (z. B. DVB-Tuner, HTS).
-  Umschalten, Programmübersicht, zuletzt gesehene Kanäle, Kanalliste und Suche zeigen nur die gewählte Quelle.
-  Beim Wechsel wird der zuletzt gesehene Kanal der Quelle getunt. Fällt eine Quelle weg, wechselt die App automatisch.
+## New in Extended
+- **Source:** Tile in the TV options. Splits the channel list by tuner/service (e.g. DVB tuner, HTS).
+  Channel up/down, program guide, recent channels, channel list and search only show the selected source.
+  Switching tunes the last watched channel of that source. If a source disappears, the app switches automatically.
 
-## Basis
+## Base
 
-Kotlin-Portierung der AOSP-App **Live Channels** (Live TV), 1:1 nach dem Original
-[LineageOS/android_packages_apps_TV](https://github.com/LineageOS/android_packages_apps_TV) (Branch `lineage-21.0`).
-Die Basis enthält keine eigenen Features. Jede Abweichung vom Original ist im Code kommentiert, behobene Fehler sind mit `Bugfix:` markiert.
+Kotlin port of the AOSP app **Live Channels** (Live TV), 1:1 based on
+[LineageOS/android_packages_apps_TV](https://github.com/LineageOS/android_packages_apps_TV) (branch `lineage-21.0`).
+The base contains no features of its own. Every deviation from the original is commented in the code, fixed bugs are marked with `Bugfix:`.
 
-Getestet auf JVC/Vestel (MediaTek), Android 14, mit DVB-Tuner und einer eigenen TV-Input-App.
+Tested on JVC/Vestel (MediaTek), Android 14, with a DVB tuner and a custom TV input app.
 
-### Modernisiert
-- Java → Kotlin, Build mit Gradle (AGP 8.7, Kotlin 2.1), minSdk 30, compileSdk/targetSdk 35
-- Läuft als normale App (keine System-App nötig), App-ID `com.android.tv`
-- Hilt statt manueller Singletons, AsyncTask → Coroutines, Guava-Futures → eigene Futures
-- AndroidX-Fragments und Leanback-`*SupportFragment` statt der alten Framework-Fragments
-- AutoValue → Kotlin-`data class`
+### Modernized
+- Java → Kotlin, Gradle build (AGP 8.7, Kotlin 2.1), minSdk 30, compileSdk/targetSdk 35
+- Runs as a regular app (no system app required), app ID `com.android.tv`
+- Hilt instead of manual singletons, AsyncTask → Coroutines, Guava futures → own futures
+- AndroidX fragments and Leanback `*SupportFragment` instead of the old framework fragments
+- AutoValue → Kotlin `data class`
 
-### Entfernt (brauchen Systemrechte oder fehlen im SDK)
-Kindersicherung/Altersfreigaben, HDMI-CEC, System-Properties, TvProvider-Suche, eingebauter Tuner (JNI),
-Cloud-EPG, Analytics, Entwickleroptionen. Kanalsperre mit PIN und DVR bleiben erhalten.
+### Removed (require system permissions or missing from the SDK)
+Parental controls/content ratings, HDMI-CEC, system properties, TvProvider search, built-in tuner (JNI),
+cloud EPG, analytics, developer options. Channel lock with PIN and DVR are kept.
 
-### Behoben für MediaTek-Fernseher (per Log belegt)
-- **App sprang immer ins Setup:** Ohne Systemrechte galten alle Kanäle als ausgeblendet.
-- **Ton setzt ständig aus (Untertitel):** Der Tuner meldet „kein Untertitel“ als Spur `255`, die App wählte sie endlos ab. Dazu wurde „Untertitel aus“ mehrmals pro Sekunde gesendet.
-- **Ton stottert (Tonspur):** Der Tuner meldet Kanalzahl/Sprache nur für die aktive Spur, die automatische Wahl sprang dadurch endlos zwischen zwei Spuren.
+### Fixed for MediaTek TVs (verified by logs)
+- **App always jumped to setup:** Without system permissions all channels were treated as hidden.
+- **Audio kept dropping (subtitles):** The tuner reports "no subtitle" as track `255`, the app deselected it endlessly. On top of that "subtitles off" was sent several times per second.
+- **Audio stuttering (audio track):** The tuner reports channel count/language only for the active track, so the automatic selection kept jumping between two tracks.
 
-### Weitere behobene Fehler aus dem Original (Auswahl)
-- Zahlreiche Abstürze (NPE) bei fehlenden Kanälen, Sendungen, Inputs oder Aufnahmen, v. a. in DVR, Programmführer und Menü
-- DVR: Aufnahmen entfernter Inputs wurden mit der falschen ID gelöscht, geänderte Endzeiten nie übernommen, beim Löschen einer Serie nur die erste Aufnahme gestoppt, endlose Rekursion im Konfliktdialog
-- DVR-Listen: Zeilen landeten vor ihrer Überschrift, beim Entfernen wurden Zeilen übersprungen
-- Timeshift: „Weiter springen“ wurde nie deaktiviert
-- Datumsformat nicht threadsicher, Division durch 0 bei Tastenwiederholung
+### More bugs fixed from the original (selection)
+- Many crashes (NPE) on missing channels, programs, inputs or recordings, mainly in DVR, program guide and menu
+- DVR: recordings of removed inputs were deleted with the wrong ID, changed end times were never applied, deleting a series stopped only the first recording, endless recursion in the conflict dialog
+- DVR lists: rows ended up before their header, rows were skipped when removing
+- Timeshift: "jump forward" was never disabled
+- Date format not thread-safe, division by zero on key repeat
 
-Alle Stellen: `grep -rn "Bugfix" app/src/main/kotlin`
+All spots: `grep -rn "Bugfix" app/src/main/kotlin`
 
-## Bauen
-`./gradlew assembleRelease` (Release ist zum Testen mit dem Debug-Schlüssel signiert).
-Für Leistungstests immer den Release-Build nehmen, Debug ist auf TV-Geräten deutlich langsamer.
+### Build
+`./gradlew assembleRelease` (release is signed with the debug key for testing).
+Always use the release build for performance tests, debug is much slower on TV devices.
 
-## Lizenz
-Apache 2.0, wie das Original (siehe `LICENSE`, `NOTICE`).
+### License
+Apache 2.0, like the original (see `LICENSE`, `NOTICE`).
