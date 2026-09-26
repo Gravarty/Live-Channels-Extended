@@ -37,6 +37,7 @@ import com.android.tv.util.images.ImageCache
 import com.android.tv.util.images.ImageLoader
 import com.android.tv.util.images.ImageLoader.ImageLoaderCallback
 import com.android.tv.util.images.ImageLoader.LoadTvInputLogoTask
+import com.android.tv.tweaks.Tweaks
 
 /**
  * Kanalzeilen der Programmübersicht inkl. Kanal-Kopf (Nummer/Name/Logo/Input-Logo) und
@@ -398,7 +399,8 @@ internal class ProgramTableAdapter(private val context: Context, private val pro
         /** Input-Logo nur in der ersten Zeile eines Inputs. */
         internal fun updateInputLogo(lastPosition: Int, forceShow: Boolean) {
             val ch = channel
-            if (ch == null) {
+            // Tweak: Provider-Logo verstecken
+            if (ch == null || Tweaks.isProviderLogoHidden(itemView.context)) {
                 inputLogoView.visibility = View.GONE
                 isInputLogoVisible = false
                 return

@@ -43,6 +43,7 @@ import com.android.tv.util.images.ImageCache
 import com.android.tv.util.images.ImageLoader
 import com.android.tv.util.images.ImageLoader.ImageLoaderCallback
 import com.android.tv.util.images.ImageLoader.LoadTvInputLogoTask
+import com.android.tv.tweaks.Tweaks
 import javax.inject.Provider
 
 /**
@@ -221,6 +222,9 @@ class ChannelBannerView @JvmOverloads constructor(
             currentChannelLogoExists = currentChannel?.channelLogoExists() == true
             updateStreamInfo(null)
             updateChannelInfo()
+        } else if (providerLogoHidden != Tweaks.isProviderLogoHidden(context)) {
+            // Tweak: geänderten Schalter sofort übernehmen, nicht erst beim nächsten Senderwechsel
+            updateChannelInfo()
         }
         updateProgramInfo(currentProgramProvider.get())
         this.updateOnTune = false
@@ -268,7 +272,9 @@ class ChannelBannerView @JvmOverloads constructor(
         channelNameTextView.text = displayName
 
         val info = tvInputManagerHelper.getTvInputInfo(getCurrentInputId())
-        if (info == null ||
+        // Tweak: Provider-Logo verstecken
+        providerLogoHidden = Tweaks.isProviderLogoHidden(context)
+        if (providerLogoHidden || info == null ||
             !ImageLoader.loadBitmap(createTvInputLogoLoaderCallback(info, this),
                 LoadTvInputLogoTask(context, ImageCache.getInstance(), info))
         ) {
@@ -282,6 +288,9 @@ class ChannelBannerView @JvmOverloads constructor(
                 channelLogoImageViewWidth, channelLogoImageViewHeight, createChannelLogoCallback(this, channel))
         }
     }
+
+    // Tweak: Stand des Schalters beim letzten updateChannelInfo()
+    private var providerLogoHidden = false
 
     private fun getCurrentInputId(): String? = currentChannelProvider.get()?.inputId
 

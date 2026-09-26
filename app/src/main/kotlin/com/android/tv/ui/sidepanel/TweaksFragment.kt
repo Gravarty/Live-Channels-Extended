@@ -69,5 +69,20 @@ class TweaksFragment : SideFragment<Item>() {
                 Tweaks.setOkOpensGuide(requireContext(), isChecked)
             }
         },
+        // Tweak: Provider-Logo verstecken
+        object : SwitchItem(
+            getString(R.string.tweak_hide_provider_logo), getString(R.string.tweak_hide_provider_logo),
+            getString(R.string.tweak_hide_provider_logo_description),
+        ) {
+            override fun onUpdate() {
+                super.onUpdate()
+                setChecked(Tweaks.isProviderLogoHidden(requireContext()))
+            }
+
+            override fun onSelected() {
+                super.onSelected()
+                Tweaks.setProviderLogoHidden(requireContext(), isChecked)
+            }
+        },
     )
 }

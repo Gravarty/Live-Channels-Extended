@@ -19,4 +19,6 @@
     <string name="tweak_dpad_channel_list_description">Sender auswählen und mit OK umschalten statt sofort zu zappen</string>
     <string name="tweak_ok_opens_guide">OK öffnet Programmübersicht</string>
     <string name="tweak_ok_opens_guide_description">OK lang drücken öffnet das Menü</string>
+    <string name="tweak_hide_provider_logo">Provider-Logo verstecken</string>
+    <string name="tweak_hide_provider_logo_description">Blendet das App-Symbol des Senderanbieters im Kanal-Banner und in der Programmübersicht aus</string>
 </resources>

@@ -19,4 +19,6 @@
     <string name="tweak_dpad_channel_list_description">Pick a channel and confirm with OK instead of switching right away</string>
     <string name="tweak_ok_opens_guide">OK opens program guide</string>
     <string name="tweak_ok_opens_guide_description">Long-press OK opens the menu</string>
+    <string name="tweak_hide_provider_logo">Hide provider logo</string>
+    <string name="tweak_hide_provider_logo_description">Hides the TV input app icon in the channel banner and program guide</string>
 </resources>
