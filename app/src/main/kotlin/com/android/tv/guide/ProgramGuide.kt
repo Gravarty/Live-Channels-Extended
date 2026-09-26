@@ -209,7 +209,7 @@ class ProgramGuide(
         }
     }
 
-    /** Zeigt den Führer; [runnableAfterAnimatorReady] läuft, bevor die Einblend-Animation startet. */
+    /** Zeigt die Programmübersicht; [runnableAfterAnimatorReady] läuft, bevor die Einblend-Animation startet. */
     fun show(runnableAfterAnimatorReady: Runnable) {
         if (container.visibility == View.VISIBLE) return
         preShowRunnable?.run()
