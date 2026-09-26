@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Extended -->
+<resources>
+    <!-- Quelle -->
+    <string name="options_item_source">Source</string>
+    <string name="side_panel_title_source">Source</string>
+    <plurals name="source_channel_count">
+        <item quantity="one">%1$d channel</item>
+        <item quantity="other">%1$d channels</item>
+    </plurals>
+</resources>

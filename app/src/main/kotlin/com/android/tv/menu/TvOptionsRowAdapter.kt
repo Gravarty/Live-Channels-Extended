@@ -9,6 +9,7 @@ import com.android.tv.features.TvFeatures
 import com.android.tv.ui.sidepanel.ClosedCaptionFragment
 import com.android.tv.ui.sidepanel.DisplayModeFragment
 import com.android.tv.ui.sidepanel.MultiAudioFragment
+import com.android.tv.ui.sidepanel.SourceFragment
 import com.android.tv.util.OnboardingUtils
 import javax.inject.Inject
 
@@ -26,6 +27,8 @@ class TvOptionsRowAdapter(context: Context, customActions: List<CustomAction>?) 
 
     override fun createBaseActions(): List<MenuAction> {
         val actionList = ArrayList<MenuAction>()
+        // Extended: Quelle als erstes Tile
+        actionList.add(MenuAction.SOURCE_ACTION)
         actionList.add(MenuAction.SELECT_CLOSED_CAPTION_ACTION)
         actionList.add(MenuAction.SELECT_DISPLAY_MODE_ACTION)
         if (TvFeatures.isPictureInPictureEnabled(mainActivity)) actionList.add(MenuAction.SYSTEMWIDE_PIP_ACTION)
@@ -37,6 +40,7 @@ class TvOptionsRowAdapter(context: Context, customActions: List<CustomAction>?) 
         updatePipAction()
         updateMultiAudioAction()
         updateDisplayModeAction()
+        updateSourceAction()
         return actionList
     }
 
@@ -45,6 +49,7 @@ class TvOptionsRowAdapter(context: Context, customActions: List<CustomAction>?) 
         if (updatePipAction()) notifyItemChanged(getItemPosition(MenuAction.SYSTEMWIDE_PIP_ACTION))
         if (updateMultiAudioAction()) notifyItemChanged(getItemPosition(MenuAction.SELECT_AUDIO_LANGUAGE_ACTION))
         if (updateDisplayModeAction()) notifyItemChanged(getItemPosition(MenuAction.SELECT_DISPLAY_MODE_ACTION))
+        if (updateSourceAction()) notifyItemChanged(getItemPosition(MenuAction.SOURCE_ACTION))
     }
 
     private fun updateClosedCaptionAction() = updateActionDescription(MenuAction.SELECT_CLOSED_CAPTION_ACTION)
@@ -69,6 +74,9 @@ class TvOptionsRowAdapter(context: Context, customActions: List<CustomAction>?) 
             updateActionDescription(MenuAction.SELECT_DISPLAY_MODE_ACTION)
     }
 
+    // Extended: Quelle – Beschreibung = gewählte Quelle
+    private fun updateSourceAction(): Boolean = updateActionDescription(MenuAction.SOURCE_ACTION)
+
     private fun updateActionDescription(action: MenuAction): Boolean =
         MenuAction.setActionDescription(action, mainActivity.tvOptionsManager.getOptionString(action.type))
 
@@ -81,6 +89,8 @@ class TvOptionsRowAdapter(context: Context, customActions: List<CustomAction>?) 
             TvOptionsManager.OPTION_MULTI_AUDIO -> sideFragmentManager.show(MultiAudioFragment())
             TvOptionsManager.OPTION_MORE_CHANNELS -> mainActivity.showMerchantCollection()
             TvOptionsManager.OPTION_SETTINGS -> mainActivity.showSettingsFragment()
+            // Extended: Quelle
+            TvOptionsManager.OPTION_SOURCE -> sideFragmentManager.show(SourceFragment())
         }
     }
 }

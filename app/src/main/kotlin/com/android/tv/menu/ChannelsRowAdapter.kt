@@ -8,6 +8,7 @@ import com.android.tv.ChannelChanger
 import com.android.tv.R
 import com.android.tv.TvSingletons
 import com.android.tv.data.ChannelImpl
+import com.android.tv.data.ChannelDataManager
 import com.android.tv.data.api.Channel
 import com.android.tv.dvr.DvrDataManager
 import com.android.tv.features.TvFeatures
@@ -147,16 +148,17 @@ class ChannelsRowAdapter(
         val channelList = ArrayList<Channel>()
         val currentChannelId = mainActivity.currentChannelId
         val recentChannels = mainActivity.getRecentChannels()
+        val channelDataManager = mainActivity.channelDataManager
         for (channelId in recentChannels) {
-            if (addChannelToList(channelList, recommender.getChannel(channelId), currentChannelId)) break
+            if (addChannelToList(channelList, recommender.getChannel(channelId), currentChannelId, channelDataManager)) break
         }
         for (channel in recommender.recommendChannels(maxCount)) {
             if (channelList.size >= maxCount) break
-            addChannelToList(channelList, channel, currentChannelId)
+            addChannelToList(channelList, channel, currentChannelId, channelDataManager)
         }
         for (channelId in recentChannels) {
             if (channelList.size >= minCount) break
-            addChannelToList(channelList, recommender.getChannel(channelId), currentChannelId)
+            addChannelToList(channelList, recommender.getChannel(channelId), currentChannelId, channelDataManager)
         }
         return channelList
     }
@@ -172,8 +174,11 @@ class ChannelsRowAdapter(
     }
 
     companion object {
-        private fun addChannelToList(channelList: MutableList<Channel>, channel: Channel?, currentChannelId: Long): Boolean {
-            if (channel == null || channel.id == currentChannelId || channel in channelList || !channel.isBrowsable) return false
+        // Extended: Quelle – nur Kanäle der gewählten Quelle (isVisible statt isBrowsable)
+        private fun addChannelToList(channelList: MutableList<Channel>, channel: Channel?, currentChannelId: Long,
+            channelDataManager: ChannelDataManager): Boolean {
+            if (channel == null || channel.id == currentChannelId || channel in channelList ||
+                !channelDataManager.isVisible(channel)) return false
             channelList.add(channel)
             return true
         }

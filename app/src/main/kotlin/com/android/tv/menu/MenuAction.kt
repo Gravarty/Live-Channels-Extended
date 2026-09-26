@@ -38,6 +38,9 @@ class MenuAction private constructor(
             MenuAction(R.string.options_item_multi_audio, TvOptionsManager.OPTION_MULTI_AUDIO, R.drawable.ic_tvoption_multi_track)
         @JvmField val MORE_CHANNELS_ACTION =
             MenuAction(R.string.options_item_more_channels, TvOptionsManager.OPTION_MORE_CHANNELS, R.drawable.ic_app_store)
+        // Extended: Quelle
+        @JvmField val SOURCE_ACTION =
+            MenuAction(R.string.options_item_source, TvOptionsManager.OPTION_SOURCE, R.drawable.ic_tvoption_channel_sources)
         @JvmField val SETTINGS_ACTION =
             MenuAction(R.string.options_item_settings, TvOptionsManager.OPTION_SETTINGS, R.drawable.ic_settings)
 

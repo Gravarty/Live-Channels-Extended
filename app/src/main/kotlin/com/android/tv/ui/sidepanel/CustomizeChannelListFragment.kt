@@ -87,7 +87,8 @@ class CustomizeChannelListFragment : SideFragment<Item>() {
     override fun getItemList(): List<Item> {
         items.clear()
         channels.clear()
-        channels.addAll(channelDataManager.getChannelList())
+        // Extended: Quelle – nur Kanäle der gewählten Quelle
+        channels.addAll(channelDataManager.getChannelList().filter { channelDataManager.isInSelectedSource(it) })
         if (groupingType == GROUP_BY_SOURCE) addItemForGroupBySource(items) else addItemForGroupByHdSd(items)
         return items
     }

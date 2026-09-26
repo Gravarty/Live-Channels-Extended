@@ -111,7 +111,7 @@ class ChannelTuner(
         if (current == null) {
             channelIndex = 0
             val channel = channels[channelIndex]
-            if (channel.isBrowsable) return channel
+            if (isVisible(channel)) return channel
         } else {
             // Bugfix: gelöschter aktueller Kanal führte zu NPE → vom Listenanfang suchen
             channelIndex = channelIndexMap[current.id] ?: 0
@@ -121,7 +121,7 @@ class ChannelTuner(
             var next = if (up) channelIndex + 1 + i else channelIndex - 1 - i + size
             if (next >= size) next -= size
             val channel = channels[next]
-            if (channel.isBrowsable) return channel
+            if (isVisible(channel)) return channel
         }
         Log.e(TAG, "This code should not be reached")
         return null
@@ -131,12 +131,12 @@ class ChannelTuner(
     fun findNearestBrowsableChannel(channelId: Long): Channel? {
         if (browsableChannelCount == 0) return null
         val channel = channelMap[channelId] ?: return browsableChannels[0]
-        if (channel.isBrowsable) return channel
+        if (isVisible(channel)) return channel
         val index = channelIndexMap[channelId] ?: return browsableChannels[0]
         val size = channels.size
         for (i in 1..size / 2) {
-            channels[(index + i) % size].takeIf { it.isBrowsable }?.let { return it }
-            channels[(index - i + size) % size].takeIf { it.isBrowsable }?.let { return it }
+            channels[(index + i) % size].takeIf { isVisible(it) }?.let { return it }
+            channels[(index - i + size) % size].takeIf { isVisible(it) }?.let { return it }
         }
         throw IllegalStateException("This code should be unreachable in findNearestBrowsableChannel")
     }
@@ -163,6 +163,11 @@ class ChannelTuner(
         val previous = currentChannel
         currentChannel = channel
         if (channel != null) currentInputInfo = inputManager.getTvInputInfo(channel.inputId)
+        // Extended: Quelle – Kanal einer anderen Quelle (Launcher, Suche, DVR) → Quelle wechselt mit
+        if (channel != null && !channel.isPassthrough) {
+            if (!channelDataManager.isInSelectedSource(channel)) channelDataManager.selectSource(channel.inputId)
+            channelDataManager.setLastChannelForSource(channel)
+        }
         listeners.toList().forEach { it.onChannelChanged(previous, channel) }
     }
 
@@ -184,9 +189,12 @@ class ChannelTuner(
         listeners.toList().forEach { it.onBrowsableChannelListChanged() }
     }
 
+    // Extended: Quelle – "sichtbar" heißt zusätzlich "in der gewählten Quelle"
+    private fun isVisible(channel: Channel) = channelDataManager.isVisible(channel)
+
     private fun updateBrowsableChannels() {
         browsableChannels.clear()
-        channels.filterTo(browsableChannels) { it.isBrowsable }
+        channels.filterTo(browsableChannels) { isVisible(it) }
     }
 
     companion object {

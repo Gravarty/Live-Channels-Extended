@@ -26,6 +26,12 @@ class TvOptionsManager(private val context: Context) {
             DisplayMode.getLabel(if (available) displayMode else DisplayMode.MODE_NORMAL, context)
         }
         OPTION_MULTI_AUDIO -> multiAudio
+        // Extended: Quelle – Name der gewählten Quelle
+        OPTION_SOURCE -> (context as MainActivity).let { activity ->
+            activity.channelDataManager.selectedSourceInputId?.let { inputId ->
+                com.android.tv.util.Utils.loadLabel(activity, activity.tvInputManagerHelper.getTvInputInfo(inputId))
+            }
+        }
         else -> ""
     }
 
@@ -65,5 +71,7 @@ class TvOptionsManager(private val context: Context) {
         const val OPTION_MORE_CHANNELS = 4
         const val OPTION_DEVELOPER = 5
         const val OPTION_SETTINGS = 6
+        // Extended: Quelle
+        const val OPTION_SOURCE = 7
     }
 }

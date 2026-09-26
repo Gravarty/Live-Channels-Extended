@@ -369,7 +369,8 @@ class TuningController(
         activity.tvViewUiManager.endShrunkenTvView()
         isCompletingShrunkenTvView = true
         var returnChannel = channelBeforeShrunkenTvView
-        if (returnChannel == null || (!returnChannel.isPassthrough && !returnChannel.isBrowsable)) {
+        // Extended: Quelle – auch Kanäle außerhalb der gewählten Quelle gelten als nicht sichtbar
+        if (returnChannel == null || (!returnChannel.isPassthrough && !activity.channelDataManager.isVisible(returnChannel))) {
             // Kanal wurde ausgeblendet: nächsten sichtbaren nehmen
             returnChannel = getBrowsableChannel()
         }
@@ -399,7 +400,8 @@ class TuningController(
 
     private fun getBrowsableChannel(): Channel? {
         val current = channelTuner.currentChannel
-        return if (current != null && current.isBrowsable) current else channelTuner.getAdjacentBrowsableChannel(true)
+        // Extended: Quelle
+        return if (current != null && activity.channelDataManager.isVisible(current)) current else channelTuner.getAdjacentBrowsableChannel(true)
     }
 
     private fun updateAvailabilityToast() {

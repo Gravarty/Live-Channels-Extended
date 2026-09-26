@@ -168,7 +168,66 @@ class ChannelDataManager @Inject constructor(
     /** Kopie der Kanalliste (sortiert, inkl. ausgeblendeter Kanäle). */
     fun getChannelList(): List<Channel> = ArrayList(data.channels)
 
-    fun getBrowsableChannelList(): List<Channel> = data.channels.filter { it.isBrowsable }
+    // Extended: Quelle – nur Kanäle der gewählten Quelle (Programmübersicht, Suche, Empfehlungen)
+    fun getBrowsableChannelList(): List<Channel> = data.channels.filter { isVisible(it) }
+
+    // ---- Extended: Quelle ----
+    // Die Kanalliste zeigt nur die Kanäle eines Tuners/Services. Passthrough-Eingänge (HDMI) sind nie gefiltert.
+
+    private val sourcePreferences: SharedPreferences =
+        context.getSharedPreferences(PREF_SOURCE, Context.MODE_PRIVATE)
+
+    /** Input-ID der gewählten Quelle; null = noch keine Quelle mit Kanälen. */
+    var selectedSourceInputId: String? = sourcePreferences.getString(KEY_SELECTED_SOURCE, null)
+        private set
+
+    /** Kanal gehört zur gewählten Quelle (oder ist ein Passthrough-Eingang). */
+    fun isInSelectedSource(channel: Channel): Boolean =
+        channel.isPassthrough || selectedSourceInputId == null || channel.inputId == selectedSourceInputId
+
+    /** Sichtbar = nicht ausgeblendet und in der gewählten Quelle. */
+    fun isVisible(channel: Channel): Boolean = channel.isBrowsable && isInSelectedSource(channel)
+
+    /** Alle Quellen mit mindestens einem sichtbaren Kanal, in Reihenfolge der Kanalliste. */
+    fun getSourceInputIds(): List<String> =
+        data.channels.asSequence().filter { it.isBrowsable && !it.isPassthrough }.map { it.inputId }.distinct().toList()
+
+    /** Wählt eine Quelle. Ohne sichtbare Kanäle wird sie ignoriert. */
+    fun selectSource(inputId: String) {
+        if (inputId == selectedSourceInputId || inputId !in getSourceInputIds()) return
+        setSelectedSource(inputId)
+        notifyChannelBrowsableChanged()
+    }
+
+    /** Letzter gesehener Kanal pro Quelle (für den Quellenwechsel). */
+    fun getLastChannelIdForSource(inputId: String): Long =
+        sourcePreferences.getLong(KEY_LAST_CHANNEL_PREFIX + inputId, Channel.INVALID_ID)
+
+    fun setLastChannelForSource(channel: Channel) {
+        if (channel.isPassthrough) return
+        sourcePreferences.edit().putLong(KEY_LAST_CHANNEL_PREFIX + channel.inputId, channel.id).apply()
+    }
+
+    /**
+     * Gewählte Quelle entfernt oder ohne sichtbare Kanäle → erste andere Quelle mit Kanälen.
+     * Gibt es keine mehr, wird die Auswahl gelöscht (App geht wie bisher ins Setup).
+     */
+    private fun validateSelectedSource() {
+        val sources = getSourceInputIds()
+        val selected = selectedSourceInputId
+        if (selected != null && selected in sources) return
+        val newSource = sources.firstOrNull()
+        if (newSource != selected) {
+            Log.i(TAG, "Quelle $selected nicht mehr verfügbar, wechsle zu $newSource")
+            setSelectedSource(newSource)
+        }
+    }
+
+    private fun setSelectedSource(inputId: String?) {
+        selectedSourceInputId = inputId
+        sourcePreferences.edit().putString(KEY_SELECTED_SOURCE, inputId).apply()
+    }
+    // ---- Ende Extended: Quelle ----
 
     fun getChannelCountForInput(inputId: String): Int = data.channelCountMap[inputId] ?: 0
 
@@ -200,9 +259,19 @@ class ChannelDataManager @Inject constructor(
         if (!skipNotifyChannelBrowsableChanged) notifyChannelBrowsableChanged()
     }
 
-    fun notifyChannelBrowsableChanged() = listeners.forEach { it.onChannelBrowsableChanged() }
-    private fun notifyChannelListUpdated() = listeners.forEach { it.onChannelListUpdated() }
-    private fun notifyLoadFinished() = listeners.forEach { it.onLoadFinished() }
+    // Extended: Quelle vor jeder Benachrichtigung prüfen, damit alle Listener denselben Stand sehen
+    fun notifyChannelBrowsableChanged() {
+        validateSelectedSource()
+        listeners.forEach { it.onChannelBrowsableChanged() }
+    }
+    private fun notifyChannelListUpdated() {
+        validateSelectedSource()
+        listeners.forEach { it.onChannelListUpdated() }
+    }
+    private fun notifyLoadFinished() {
+        validateSelectedSource()
+        listeners.forEach { it.onLoadFinished() }
+    }
 
     /** Lädt neu und führt [postRunnable] danach aus. */
     fun updateChannels(postRunnable: Runnable) {
@@ -448,5 +517,9 @@ class ChannelDataManager @Inject constructor(
         private const val TAG = "ChannelDataManager"
         private const val DEBUG = false
         private const val MSG_UPDATE_CHANNELS = 1000
+        // Extended: Quelle
+        private const val PREF_SOURCE = "com.android.tv.extended.source"
+        private const val KEY_SELECTED_SOURCE = "selected_source"
+        private const val KEY_LAST_CHANNEL_PREFIX = "last_channel_"
     }
 }
