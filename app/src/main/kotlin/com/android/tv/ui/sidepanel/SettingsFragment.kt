@@ -54,6 +54,11 @@ class SettingsFragment : SideFragment<Item>() {
 
         // Extended: "Feedback geben" entfernt
 
+        // Extended: Anpassungen
+        items.add(object : SubMenuItem(getString(R.string.settings_tweaks), sideFragmentManager) {
+            override fun getFragment(): SideFragment<*> = TweaksFragment()
+        })
+
         if (Licenses.hasLicenses(requireContext())) {
             items.add(object : SubMenuItem(getString(R.string.settings_menu_licenses), sideFragmentManager) {
                 override fun getFragment(): SideFragment<*> = LicenseSideFragment()

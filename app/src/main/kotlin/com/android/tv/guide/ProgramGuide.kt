@@ -25,6 +25,7 @@ import com.android.tv.data.GenreItems
 import com.android.tv.data.ProgramDataManager
 import com.android.tv.dvr.DvrDataManager
 import com.android.tv.dvr.DvrScheduleManager
+import com.android.tv.tweaks.Tweaks
 import com.android.tv.ui.HardwareLayerAnimatorListenerAdapter
 import com.android.tv.ui.ViewUtils
 import com.android.tv.ui.hideable.AutoHideScheduler
@@ -52,7 +53,7 @@ class ProgramGuide(
     val programManager = ProgramManager(tvInputManagerHelper, channelDataManager, programDataManager, dvrDataManager, dvrScheduleManager)
     private val res = activity.resources
     private val widthPerHour = res.getDimensionPixelSize(R.dimen.program_guide_table_width_per_hour)
-    private val viewPortMillis: Long
+    private var viewPortMillis = 0L
     private val rowHeight = res.getDimensionPixelSize(R.dimen.program_guide_table_item_row_height)
     private val detailHeight = res.getDimensionPixelSize(R.dimen.program_guide_table_detail_height)
     private val selectionRow = res.getInteger(R.integer.program_guide_selection_row)
@@ -87,6 +88,8 @@ class ProgramGuide(
     private var timelineAnimation = false
     private var lastRequestedGenreId = GenreItems.ID_ALL_CHANNELS
     private var isDuringResetRowSelection = false
+    // Tweak: Genre-Leiste ausgebaut (wird bei jedem show() gelesen)
+    private var genrePanelHidden = false
     private val handler = Handler(Looper.getMainLooper()) { msg ->
         if (msg.what == MSG_PROGRAM_TABLE_FADE_IN_ANIM) programTableFadeInAnimator.start()
         true
@@ -110,11 +113,7 @@ class ProgramGuide(
 
     init {
         GuideUtils.setWidthPerHour(widthPerHour)
-        // Fensterbreite über WindowMetrics statt Display.getSize()
-        val displayWidth = activity.windowManager.currentWindowMetrics.bounds.width()
-        val gridWidth = displayWidth - res.getDimensionPixelOffset(R.dimen.program_guide_table_margin_start) -
-            res.getDimensionPixelSize(R.dimen.program_guide_table_header_column_width)
-        viewPortMillis = gridWidth * HOUR_IN_MILLIS / widthPerHour
+        updateViewPortMillis()
 
         container.viewTreeObserver.addOnGlobalFocusChangeListener(GlobalFocusChangeListener())
         sidePanelGridView.recycledViewPool.setMaxRecycledViews(R.layout.program_guide_side_panel_row,
@@ -215,6 +214,7 @@ class ProgramGuide(
         if (container.visibility == View.VISIBLE) return
         preShowRunnable?.run()
         programManager.programGuideVisibilityChanged(true)
+        applyGenrePanelTweak()
         startUtcTime = Utils.floorTime(System.currentTimeMillis() - MIN_DURATION_FROM_START_TIME_TO_CURRENT_TIME, HALF_HOUR_IN_MILLIS)
         programManager.updateInitialTimeRange(startUtcTime, startUtcTime + viewPortMillis)
         programManager.addListener(programManagerListener)
@@ -306,7 +306,7 @@ class ProgramGuide(
     private fun updateGuidePosition() {
         val screenHeight = container.height
         if (screenHeight <= 0) return
-        val startPadding = res.getDimensionPixelOffset(R.dimen.program_guide_table_margin_start)
+        val startPadding = tableStartPadding()
         val topPadding = res.getDimensionPixelOffset(R.dimen.program_guide_table_margin_top)
         val bottomPadding = res.getDimensionPixelOffset(R.dimen.program_guide_table_margin_bottom)
         val tableHeight = res.getDimensionPixelOffset(R.dimen.program_guide_table_header_row_height) + detailHeight +
@@ -346,10 +346,36 @@ class ProgramGuide(
     }
 
     private fun startPartial() {
-        if (showGuidePartial) return
+        if (showGuidePartial || genrePanelHidden) return // Tweak: ohne Genre-Leiste immer Vollansicht
         showGuidePartial = true
         sharedPreference.edit().putBoolean(KEY_SHOW_GUIDE_PARTIAL, true).apply()
         fullToPartialAnimator.start()
+    }
+
+    /** Sichtbare Zeitspanne aus der Rasterbreite. */
+    private fun updateViewPortMillis() {
+        // Fensterbreite über WindowMetrics statt Display.getSize()
+        val displayWidth = activity.windowManager.currentWindowMetrics.bounds.width()
+        val gridWidth = displayWidth - tableStartPadding() -
+            res.getDimensionPixelSize(R.dimen.program_guide_table_header_column_width)
+        viewPortMillis = gridWidth * HOUR_IN_MILLIS / widthPerHour
+    }
+
+    // Tweak: ohne Genre-Leiste wächst die Tabelle nach links
+    private fun tableStartPadding(): Int = res.getDimensionPixelOffset(
+        if (genrePanelHidden) R.dimen.extended_guide_table_margin_start else R.dimen.program_guide_table_margin_start)
+
+    /** Tweak: Genre-Leiste komplett aus dem Layout nehmen, Vollansicht erzwingen, Genre-Filter zurücksetzen. */
+    private fun applyGenrePanelTweak() {
+        genrePanelHidden = Tweaks.isGuideGenresHidden(activity)
+        sidePanel.visibility = if (genrePanelHidden) View.GONE else View.VISIBLE
+        showGuidePartial = !genrePanelHidden &&
+            (accessibilityManager.isEnabled || sharedPreference.getBoolean(KEY_SHOW_GUIDE_PARTIAL, true))
+        if (genrePanelHidden && programManager.selectedGenreId != GenreItems.ID_ALL_CHANNELS) {
+            programManager.resetChannelListWithGenre(GenreItems.ID_ALL_CHANNELS)
+        }
+        table.setPaddingRelative(tableStartPadding(), table.paddingTop, table.paddingEnd, table.paddingBottom)
+        updateViewPortMillis()
     }
 
     private fun startCurrentTimeIndicator(initialDelay: Long) = handler.postDelayed(updateTimeIndicator, initialDelay)
