@@ -21,7 +21,6 @@ object TvSettings {
     private const val PREF_DVR_SUBTITLE_ID = "pref.dvr_subtitle_id"
     private const val PREF_DVR_SUBTITLE_LANGUAGE = "pref.dvr_subtitle_language"
     private const val PREF_DISABLE_PIN_UNTIL = "pref.disable_pin_until"
-    private const val PREF_TV_IAPP_STATES = "pref.tviapp_on"
 
     private fun prefs(context: Context) = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -76,6 +75,4 @@ object TvSettings {
     @JvmStatic fun setDisablePinUntil(context: Context, timeMillis: Long) =
         prefs(context).edit().putLong(PREF_DISABLE_PIN_UNTIL, timeMillis).apply()
 
-    @JvmStatic fun isTvIAppOn(context: Context): Boolean = prefs(context).getBoolean(PREF_TV_IAPP_STATES, false)
-    @JvmStatic fun setTvIAppOn(context: Context, isOn: Boolean) = prefs(context).edit().putBoolean(PREF_TV_IAPP_STATES, isOn).apply()
 }

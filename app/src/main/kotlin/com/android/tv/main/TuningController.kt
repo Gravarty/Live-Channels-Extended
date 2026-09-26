@@ -1,7 +1,6 @@
 package com.android.tv.main
 
 import android.content.ContentUris
-import android.media.tv.AitInfo
 import android.media.tv.TvContentRating
 import android.media.tv.TvContract
 import android.media.tv.TvInputManager
@@ -11,7 +10,6 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import com.android.tv.ChannelTuner
 import com.android.tv.MainActivity
 import com.android.tv.R
@@ -497,11 +495,6 @@ class TuningController(
             if (TvFeatures.TUNER_SIGNAL_STRENGTH) {
                 overlayManager.updateChannelBannerAndShowIfNeeded(TvOverlayManager.UPDATE_CHANNEL_BANNER_REASON_UPDATE_SIGNAL_STRENGTH)
             }
-        }
-
-        @RequiresApi(33)
-        override fun onAitInfoUpdated(inputId: String, aitInfo: AitInfo) {
-            activity.iAppManager?.onAitInfoUpdated(aitInfo)
         }
     }
 

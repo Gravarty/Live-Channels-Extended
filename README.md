@@ -9,6 +9,7 @@ New features are marked with `Extended:` in the code, their strings live in `str
   Switching tunes the last watched channel of that source. If a source disappears, the app switches automatically.
   The tile sits right before Settings.
 - **Settings cleaned up:** "Send feedback" and "Interactive app settings" removed.
+- **Interactive TV apps (TIAF/HbbTV) removed:** no effect on the target device (no interactive app service).
 
 ## Base
 

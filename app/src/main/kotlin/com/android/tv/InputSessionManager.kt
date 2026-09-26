@@ -1,7 +1,6 @@
 package com.android.tv
 
 import android.content.Context
-import android.media.tv.AitInfo
 import android.media.tv.TvContentRating
 import android.media.tv.TvInputInfo
 import android.media.tv.TvRecordingClient
@@ -12,7 +11,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.MainThread
-import androidx.annotation.RequiresApi
 import com.android.tv.common.compat.TvViewCompat
 import com.android.tv.common.compat.TvViewCompat.TvInputCallbackCompat
 import com.android.tv.data.api.Channel
@@ -275,9 +273,6 @@ class InputSessionManager @Inject constructor(
         override fun onContentBlocked(inputId: String, rating: TvContentRating) = delegate.onContentBlocked(inputId, rating)
         override fun onTimeShiftStatusChanged(inputId: String, status: Int) = delegate.onTimeShiftStatusChanged(inputId, status)
         override fun onSignalStrength(inputId: String, value: Int) = delegate.onSignalStrength(inputId, value)
-
-        @RequiresApi(33)
-        override fun onAitInfoUpdated(inputId: String, aitInfo: AitInfo) = delegate.onAitInfoUpdated(inputId, aitInfo)
     }
 
     companion object {

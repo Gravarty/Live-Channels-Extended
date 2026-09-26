@@ -27,7 +27,6 @@ import com.android.tv.data.StreamInfo
 import com.android.tv.dialog.DvrHistoryDialogFragment
 import com.android.tv.dialog.FullscreenDialogFragment
 import com.android.tv.dialog.HalfSizedDialogFragment
-import com.android.tv.dialog.InteractiveAppDialogFragment
 import com.android.tv.dialog.PinDialogFragment
 import com.android.tv.dialog.RecentlyWatchedDialogFragment
 import com.android.tv.dialog.SafeDismissDialogFragment
@@ -636,7 +635,6 @@ class TvOverlayManager(
             FullscreenDialogFragment.DIALOG_TAG,
             LicenseDialogFragment.DIALOG_TAG,
             HalfSizedDialogFragment.DIALOG_TAG,
-            InteractiveAppDialogFragment.DIALOG_TAG,
         )
 
         private fun isMediaStartKey(keyCode: Int): Boolean = keyCode in setOf(

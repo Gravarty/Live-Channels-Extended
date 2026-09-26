@@ -63,7 +63,6 @@ class KeyHandler(
 
     /** Aus Activity.dispatchKeyEvent; [superDispatch] = Standardverarbeitung der Activity. */
     fun dispatchKeyEvent(event: KeyEvent, superDispatch: (KeyEvent) -> Boolean): Boolean {
-        if (activity.iAppManager?.dispatchKeyEvent(event) == true) return true
         if (event.keyCode == KeyEvent.KEYCODE_BACK) {
             // BACK_UP ohne BACK_DOWN ignorieren (von einer anderen Activity übrig)
             if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) backKeyPressed = true
