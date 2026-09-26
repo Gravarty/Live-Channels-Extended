@@ -4,6 +4,9 @@ import android.app.Activity
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
+import android.util.Log
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import com.android.tv.features.TvFeatures
 import com.android.tv.ui.api.TunableTvViewPlayingApi
 
@@ -61,11 +64,24 @@ class AudioManagerHelper(
     }
 
     override fun onAudioFocusChange(focusChange: Int) {
+        // Bugfix: Der TV-eigene Player (com.mediatek.wwtv.tvcenter, JVC/Vestel) läuft im Hintergrund weiter und
+        // fordert bei jedem Tune den Audio-Fokus an. Das Original schaltet bei dauerhaftem Fokusverlust stumm,
+        // obwohl die App im Vordergrund läuft → Sender ohne Ton (per Log belegt). Solange die App sichtbar im
+        // Vordergrund ist (kein Bild-in-Bild), wird ein dauerhafter Fokusverlust daher ignoriert.
+        if (focusChange == AudioManager.AUDIOFOCUS_LOSS && isResumedInForeground()) {
+            Log.w(TAG, "Audio focus lost while in foreground, keeping volume")
+            return
+        }
         audioFocusStatus = focusChange
         setVolumeByAudioFocusStatus()
     }
 
+    private fun isResumedInForeground(): Boolean =
+        !activity.isInPictureInPictureMode &&
+            (activity as? LifecycleOwner)?.lifecycle?.currentState?.isAtLeast(Lifecycle.State.RESUMED) == true
+
     companion object {
+        private const val TAG = "AudioManagerHelper"
         private const val AUDIO_MAX_VOLUME = 1.0f
         private const val AUDIO_MIN_VOLUME = 0.0f
         private const val AUDIO_DUCKING_VOLUME = 0.3f
