@@ -15,4 +15,6 @@
     <string name="tweak_hide_guide_genres_description">Programmübersicht ohne Genre-Filter links</string>
     <string name="tweak_channel_card_logo">Senderlogo in Kanal-Tiles</string>
     <string name="tweak_channel_card_logo_description">Zeigt das Senderlogo statt des Sendungsbildes</string>
+    <string name="tweak_dpad_channel_list">Hoch/Runter öffnet Senderliste</string>
+    <string name="tweak_dpad_channel_list_description">Sender auswählen und mit OK umschalten statt sofort zu zappen</string>
 </resources>

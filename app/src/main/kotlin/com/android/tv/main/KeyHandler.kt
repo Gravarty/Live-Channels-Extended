@@ -17,6 +17,7 @@ import com.android.tv.dialog.PinDialogFragment
 import com.android.tv.dvr.ui.DvrStopRecordingFragment
 import com.android.tv.dvr.ui.DvrUiHelper
 import com.android.tv.menu.Menu
+import com.android.tv.tweaks.Tweaks
 import com.android.tv.ui.KeypadChannelSwitchView
 import com.android.tv.ui.TunableTvView
 import com.android.tv.ui.TvOverlayManager
@@ -101,6 +102,13 @@ class KeyHandler(
         if (activity.searchFragment.isVisible) return null
         if (!channelTuner.areAllChannelsLoaded()) return false
         if (!channelTuner.isCurrentChannelPassthrough) {
+            // Tweak: Hoch/Runter öffnet die Senderliste statt umzuschalten
+            if ((keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_DOWN) &&
+                Tweaks.isDpadChannelList(activity) && channelTuner.browsableChannelCount > 0
+            ) {
+                if (event.repeatCount == 0) overlayManager.showKeypadChannelBrowse()
+                return true
+            }
             when (keyCode) {
                 KeyEvent.KEYCODE_CHANNEL_UP, KeyEvent.KEYCODE_DPAD_UP -> {
                     if (event.repeatCount == 0 && channelTuner.browsableChannelCount > 0) channelUpPressed()

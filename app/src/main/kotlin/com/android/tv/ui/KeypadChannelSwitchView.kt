@@ -40,9 +40,13 @@ class KeypadChannelSwitchView @JvmOverloads constructor(
     private val layoutInflater = LayoutInflater.from(context)
     private var selectedChannel: Channel? = null
 
+    // Tweak: Browse-Modus (Hoch/Runter): ganze Liste, kein Umschalten beim Ablauf
+    private var browseMode = false
+    private val browseShowDurationMillis = 5000L
+
     private val hideRunnable = Runnable {
         currentHeight = 0
-        val channel = selectedChannel
+        val channel = if (browseMode) null else selectedChannel
         if (channel != null) {
             mainActivity.tuneToChannel(channel)
         } else {
@@ -79,6 +83,7 @@ class KeypadChannelSwitchView @JvmOverloads constructor(
         channelItemListView.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 selectedChannel = if (position >= adapter.count) null else adapter.getItem(position)
+                if (browseMode) channelNumberView.text = selectedChannel?.displayNumber.orEmpty()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) { selectedChannel = null }
@@ -88,6 +93,19 @@ class KeypadChannelSwitchView @JvmOverloads constructor(
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         scheduleHide()
         return super.dispatchKeyEvent(event)
+    }
+
+    // Tweak: P+/P- blättern im Browse-Modus durch die Liste
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        if (browseMode && adapter.count > 0 &&
+            (keyCode == KeyEvent.KEYCODE_CHANNEL_UP || keyCode == KeyEvent.KEYCODE_CHANNEL_DOWN)
+        ) {
+            val step = if (keyCode == KeyEvent.KEYCODE_CHANNEL_UP) 1 else -1
+            val position = (channelItemListView.selectedItemPosition + step).coerceIn(0, adapter.count - 1)
+            channelItemListView.setSelection(position)
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
@@ -116,12 +134,13 @@ class KeypadChannelSwitchView @JvmOverloads constructor(
 
     private fun scheduleHide() {
         cancelHide()
-        postDelayed(hideRunnable, showDurationMillis)
+        postDelayed(hideRunnable, if (browseMode) browseShowDurationMillis else showDurationMillis)
     }
 
     private fun cancelHide() = removeCallbacks(hideRunnable)
 
     private fun reset() {
+        browseMode = false
         typedChannelNumber.reset()
         selectedChannel = null
         channelCandidates.clear()
@@ -130,7 +149,25 @@ class KeypadChannelSwitchView @JvmOverloads constructor(
 
     fun setChannels(channels: List<Channel>?) { this.channels = channels }
 
+    /** Tweak: alle Kanäle zeigen, [current] vorauswählen. Umschalten nur mit OK. */
+    fun startBrowse(current: Channel?) {
+        browseMode = true
+        channelCandidates.clear()
+        channelCandidates.addAll(channels.orEmpty())
+        adapter.notifyDataSetChanged()
+        if (adapter.count > 0) {
+            val position = channelCandidates.indexOfFirst { it.id == current?.id }.coerceAtLeast(0)
+            channelItemListView.requestFocus()
+            channelItemListView.setSelection(position)
+            selectedChannel = channelCandidates[position]
+            channelNumberView.text = selectedChannel?.displayNumber.orEmpty()
+        }
+        updateViewHeight()
+        scheduleHide()
+    }
+
     fun onNumberKeyUp(num: Int) {
+        browseMode = false // Tweak: Zifferneingabe beendet den Browse-Modus
         // Maximale Stellenzahl erreicht: neu beginnen
         if (!typedChannelNumber.hasDelimiter && typedChannelNumber.majorNumber.length >= MAX_CHANNEL_NUMBER_DIGIT) {
             Log.i(TAG, "Channel number reset because majorNumber.length = ${typedChannelNumber.majorNumber.length}")

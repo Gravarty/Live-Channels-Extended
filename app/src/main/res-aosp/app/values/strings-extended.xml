@@ -15,4 +15,6 @@
     <string name="tweak_hide_guide_genres_description">Program guide without the genre filter on the left</string>
     <string name="tweak_channel_card_logo">Channel logo in channel tiles</string>
     <string name="tweak_channel_card_logo_description">Shows the channel logo instead of the program image</string>
+    <string name="tweak_dpad_channel_list">Up/down opens channel list</string>
+    <string name="tweak_dpad_channel_list_description">Pick a channel and confirm with OK instead of switching right away</string>
 </resources>

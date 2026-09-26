@@ -15,6 +15,9 @@ object Tweaks {
     // Tweak: Senderlogo statt Sendungsbild in den Kanal-Tiles des Menüs
     private const val KEY_CHANNEL_CARD_LOGO = "channel_card_logo"
 
+    // Tweak: Hoch/Runter öffnet die Senderliste statt direkt umzuschalten
+    private const val KEY_DPAD_CHANNEL_LIST = "dpad_channel_list"
+
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
     fun isGuideGenresHidden(context: Context): Boolean = prefs(context).getBoolean(KEY_HIDE_GUIDE_GENRES, false)
@@ -26,4 +29,9 @@ object Tweaks {
 
     fun setChannelCardLogo(context: Context, enabled: Boolean) =
         prefs(context).edit().putBoolean(KEY_CHANNEL_CARD_LOGO, enabled).apply()
+
+    fun isDpadChannelList(context: Context): Boolean = prefs(context).getBoolean(KEY_DPAD_CHANNEL_LIST, false)
+
+    fun setDpadChannelList(context: Context, enabled: Boolean) =
+        prefs(context).edit().putBoolean(KEY_DPAD_CHANNEL_LIST, enabled).apply()
 }

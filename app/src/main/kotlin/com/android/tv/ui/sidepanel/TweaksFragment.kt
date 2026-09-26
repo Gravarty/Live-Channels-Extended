@@ -39,5 +39,20 @@ class TweaksFragment : SideFragment<Item>() {
                 Tweaks.setChannelCardLogo(requireContext(), isChecked)
             }
         },
+        // Tweak: Hoch/Runter öffnet die Senderliste
+        object : SwitchItem(
+            getString(R.string.tweak_dpad_channel_list), getString(R.string.tweak_dpad_channel_list),
+            getString(R.string.tweak_dpad_channel_list_description),
+        ) {
+            override fun onUpdate() {
+                super.onUpdate()
+                setChecked(Tweaks.isDpadChannelList(requireContext()))
+            }
+
+            override fun onSelected() {
+                super.onSelected()
+                Tweaks.setDpadChannelList(requireContext(), isChecked)
+            }
+        },
     )
 }
