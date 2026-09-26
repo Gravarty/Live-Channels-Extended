@@ -150,7 +150,7 @@ class TvApplication : Application(), TvSingletons, Starter {
 
     fun setSelectInputActivity(activity: SelectInputActivity?) { selectInputActivity = activity }
 
-    /** GUIDE-Taste: Programmführer öffnen bzw. umschalten. */
+    /** GUIDE-Taste: Programmübersicht öffnen bzw. umschalten. */
     fun handleGuideKey() {
         if (!injectedMainActivityWrapper.isResumed) {
             startActivity(Intent(Intent.ACTION_VIEW, Programs.CONTENT_URI).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))

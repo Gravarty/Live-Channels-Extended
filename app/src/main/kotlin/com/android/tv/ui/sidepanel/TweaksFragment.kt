@@ -9,7 +9,7 @@ class TweaksFragment : SideFragment<Item>() {
     override fun getTitle(): String = getString(R.string.settings_tweaks)
 
     override fun getItemList(): List<Item> = listOf(
-        // Tweak: Genre-Leiste im Programmführer
+        // Tweak: Genre-Leiste in der Programmübersicht
         object : SwitchItem(
             getString(R.string.tweak_hide_guide_genres), getString(R.string.tweak_hide_guide_genres),
             getString(R.string.tweak_hide_guide_genres_description),

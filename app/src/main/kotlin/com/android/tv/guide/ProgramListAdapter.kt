@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.tv.R
 import com.android.tv.guide.ProgramManager.TableEntry
 
-/** Einträge einer Kanalzeile im Programmführer. */
+/** Einträge einer Kanalzeile in der Programmübersicht. */
 internal class ProgramListAdapter(res: Resources, private val programGuide: ProgramGuide, private val channelIndex: Int) :
     RecyclerView.Adapter<ProgramListAdapter.ProgramItemViewHolder>(), ProgramManager.TableEntriesUpdatedListener {
 

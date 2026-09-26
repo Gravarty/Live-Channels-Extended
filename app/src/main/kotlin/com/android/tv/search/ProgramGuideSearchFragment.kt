@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Suche im Programmführer (Kanäle/Sendungen), als Leanback-SearchSupportFragment.
+ * Suche in der Programmübersicht (Kanäle/Sendungen), als Leanback-SearchSupportFragment.
  * Suche läuft per Coroutine statt AsyncTask.
  */
 class ProgramGuideSearchFragment : SearchSupportFragment() {

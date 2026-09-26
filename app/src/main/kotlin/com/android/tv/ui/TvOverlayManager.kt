@@ -47,7 +47,7 @@ import java.util.LinkedList
 
 /**
  * Port von TvOverlayManager: steuert alle Overlays über der TvView (Menü, Seitenleisten,
- * Programmführer, Dialoge, Banner-Szenen, Einrichtungs-Fragmente) und verteilt Tasten.
+ * Programmübersicht, Dialoge, Banner-Szenen, Einrichtungs-Fragmente) und verteilt Tasten.
  * Framework-Fragments → AndroidX-Fragments. Entfällt: Ratings-Attributionsdialog (Kindersicherung),
  * Analytics-Tracker.
  */
@@ -320,7 +320,7 @@ class TvOverlayManager(
 
     fun showProgramGuide() = programGuide.show { hideOverlays(FLAG_HIDE_OVERLAYS_KEEP_PROGRAM_GUIDE) }
 
-    /** true, wenn der Programmführer danach sichtbar ist. */
+    /** true, wenn die Programmübersicht danach sichtbar ist. */
     fun toggleProgramGuide(): Boolean {
         if (programGuide.isActive) {
             programGuide.onBackPressed()

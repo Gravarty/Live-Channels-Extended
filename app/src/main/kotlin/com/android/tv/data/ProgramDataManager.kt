@@ -41,7 +41,7 @@ import kotlinx.coroutines.withContext
 
 /**
  * Port von ProgramDataManager: hält die aktuelle Sendung je Kanal und (bei aktiviertem Prefetch)
- * einen Programm-Cache für den Programmführer. AsyncDbTasks ersetzt durch Coroutines auf dem DB-Thread.
+ * einen Programm-Cache für die Programmübersicht. AsyncDbTasks ersetzt durch Coroutines auf dem DB-Thread.
  * Werte der BackendKnobs (AOSP-Standard) sind als Konstanten übernommen.
  */
 @MainThread
@@ -324,7 +324,7 @@ class ProgramDataManager @Inject constructor(
         programUpdateJobs[channelId] = job
     }
 
-    // ---- Prefetch für den Programmführer ----
+    // ---- Prefetch für die Programmübersicht ----
 
     private fun startPrefetch() {
         val time = clock.currentTimeMillis()
@@ -475,7 +475,7 @@ class ProgramDataManager @Inject constructor(
         }
     }
 
-    /** Pausiert Prefetch-Updates (z. B. während im Programmführer gescrollt wird). */
+    /** Pausiert Prefetch-Updates (z. B. während in der Programmübersicht gescrollt wird). */
     fun setPauseProgramUpdate(pause: Boolean) {
         SoftPreconditions.checkState(prefetchEnabled, TAG, "Prefetch is disabled.")
         if (pauseProgramUpdate && !pause && !handler.hasMessages(MSG_UPDATE_PREFETCH_PROGRAM)) {

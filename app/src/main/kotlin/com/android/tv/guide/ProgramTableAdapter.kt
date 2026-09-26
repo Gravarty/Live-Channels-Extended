@@ -39,7 +39,7 @@ import com.android.tv.util.images.ImageLoader.ImageLoaderCallback
 import com.android.tv.util.images.ImageLoader.LoadTvInputLogoTask
 
 /**
- * Kanalzeilen des Programmführers inkl. Kanal-Kopf (Nummer/Name/Logo/Input-Logo) und
+ * Kanalzeilen der Programmübersicht inkl. Kanal-Kopf (Nummer/Name/Logo/Input-Logo) und
  * Detailbereich der fokussierten Sendung (Poster, Zeit, Format, DVR-Status, Beschreibung).
  * Gesperrte Altersfreigaben sind ohne Systemrechte nicht lesbar (keine Inhalts-Sperre im Detail);
  * Kritiker-Bewertungen sind im AOSP-Build deaktiviert (UiFlags.enableCriticRatings = false).

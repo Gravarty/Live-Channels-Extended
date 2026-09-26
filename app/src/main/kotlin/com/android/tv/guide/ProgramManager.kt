@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
 /**
- * Datenmodell des Programmführers: Kanäle (mit Genre-Filter), Zeitfenster und die Einträge je
+ * Datenmodell der Programmübersicht: Kanäle (mit Genre-Filter), Zeitfenster und die Einträge je
  * Kanal (Sendungen, Lücken, gesperrte Kanäle, geplante Aufnahmen).
  */
 @MainThread
@@ -112,7 +112,7 @@ class ProgramManager(
         schedules.forEach { schedule -> getTableEntry(schedule)?.let { notifyTableEntryUpdated(it) } }
     }
 
-    /** Beim Öffnen/Schließen des Programmführers an-/abmelden (und Prefetch pausieren). */
+    /** Beim Öffnen/Schließen der Programmübersicht an-/abmelden (und Prefetch pausieren). */
     internal fun programGuideVisibilityChanged(visible: Boolean) {
         programDataManager.setPauseProgramUpdate(visible)
         if (visible) {

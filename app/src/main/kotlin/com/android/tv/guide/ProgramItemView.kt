@@ -26,7 +26,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Eintrag im Programmführer: Titel/Folge, Fortschritt der laufenden Sendung (sekündlich),
+ * Eintrag in der Programmübersicht: Titel/Folge, Fortschritt der laufenden Sendung (sekündlich),
  * Aufnahme-Symbol; Klick tunt (laufend) bzw. plant/entfernt eine Aufnahme (Zukunft, mit DVR).
  */
 class ProgramItemView @JvmOverloads constructor(

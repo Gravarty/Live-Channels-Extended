@@ -9,7 +9,7 @@ import android.content.Context
 object Tweaks {
     private const val PREFS = "com.android.tv.extended.tweaks"
 
-    // Tweak: Genre-Leiste im Programmführer komplett ausbauen
+    // Tweak: Genre-Leiste in der Programmübersicht komplett ausbauen
     private const val KEY_HIDE_GUIDE_GENRES = "hide_guide_genres"
 
     // Tweak: Senderlogo statt Sendungsbild in den Kanal-Tiles des Menüs

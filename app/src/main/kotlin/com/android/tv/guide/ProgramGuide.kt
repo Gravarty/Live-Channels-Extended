@@ -34,7 +34,7 @@ import com.android.tv.util.Utils
 import java.util.concurrent.TimeUnit
 
 /**
- * Programmführer (EPG): Genre-Leiste, Zeitleiste, Kanalraster mit Detailzeile, Anzeige in
+ * Programmübersicht (EPG): Genre-Leiste, Zeitleiste, Kanalraster mit Detailzeile, Anzeige in
  * Teil- oder Vollansicht. Entfällt: Suche-Button (TvFeatures.EPG_SEARCH ist im Original OFF),
  * Tracker/PerformanceMonitor.
  */

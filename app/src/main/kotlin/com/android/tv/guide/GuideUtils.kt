@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import java.util.concurrent.TimeUnit
 
-/** Umrechnung Zeit↔Pixel und Fokus-Suche im Programmführer. */
+/** Umrechnung Zeit↔Pixel und Fokus-Suche in der Programmübersicht. */
 internal object GuideUtils {
     private const val INVALID_INDEX = -1
     private var widthPerHour = 0

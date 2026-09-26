@@ -13,7 +13,7 @@ open class TimelineGridView @JvmOverloads constructor(
 ) : RecyclerView(context, attrs, defStyle) {
     init {
         layoutManager = object : LinearLayoutManager(context, HORIZONTAL, false) {
-            // Scrollen übernimmt der Programmführer selbst
+            // Scrollen übernimmt die Programmübersicht selbst
             override fun onRequestChildFocus(parent: RecyclerView, state: State, child: View, focused: View?) = true
         }
         isFocusable = false
@@ -21,7 +21,7 @@ open class TimelineGridView @JvmOverloads constructor(
     }
 }
 
-/** Zeitleiste über dem Programmführer (merkt sich die Scrollposition). */
+/** Zeitleiste über der Programmübersicht (merkt sich die Scrollposition). */
 class TimelineRow @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0,
 ) : TimelineGridView(context, attrs, defStyle) {

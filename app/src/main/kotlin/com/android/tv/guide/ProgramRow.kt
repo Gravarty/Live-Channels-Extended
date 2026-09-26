@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.max
 import kotlin.math.min
 
-/** Eine Kanalzeile im Programmführer; steuert das horizontale Scrollen per Fokus. */
+/** Eine Kanalzeile in der Programmübersicht; steuert das horizontale Scrollen per Fokus. */
 class ProgramRow @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0,
 ) : TimelineGridView(context, attrs, defStyle) {

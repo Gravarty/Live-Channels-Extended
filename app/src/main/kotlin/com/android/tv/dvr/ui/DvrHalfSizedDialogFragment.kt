@@ -15,7 +15,7 @@ import com.android.tv.dvr.ui.DvrConflictFragment.DvrChannelWatchConflictFragment
 import com.android.tv.dvr.ui.DvrConflictFragment.DvrProgramConflictFragment
 import com.android.tv.ui.DetailsActivity
 
-/** Halbhoher DVR-Dialog; hält den Programmführer offen, solange er angezeigt wird. */
+/** Halbhoher DVR-Dialog; hält die Programmübersicht offen, solange sie angezeigt wird. */
 open class DvrHalfSizedDialogFragment : HalfSizedDialogFragment() {
 
     override fun onAttach(context: Context) {

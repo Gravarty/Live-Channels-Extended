@@ -27,7 +27,7 @@ import kotlinx.coroutines.withContext
 
 /**
  * Aus MainActivity.handleIntent() ausgelagert: wertet Start-Intents aus (Kanal-/Input-URIs,
- * Programmführer, Eingangsauswahl, Einrichtung) und merkt sich, worauf beim Start getunt wird.
+ * Programmübersicht, Eingangsauswahl, Einrichtung) und merkt sich, worauf beim Start getunt wird.
  */
 class IntentHandler(
     private val activity: MainActivity,
