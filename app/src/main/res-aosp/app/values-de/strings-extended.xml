@@ -17,4 +17,6 @@
     <string name="tweak_channel_card_logo_description">Zeigt das Senderlogo statt des Sendungsbildes</string>
     <string name="tweak_dpad_channel_list">Hoch/Runter öffnet Senderliste</string>
     <string name="tweak_dpad_channel_list_description">Sender auswählen und mit OK umschalten statt sofort zu zappen</string>
+    <string name="tweak_ok_opens_guide">OK öffnet Programmübersicht</string>
+    <string name="tweak_ok_opens_guide_description">OK lang drücken öffnet das Menü</string>
 </resources>

@@ -18,6 +18,9 @@ object Tweaks {
     // Tweak: Hoch/Runter öffnet die Senderliste statt direkt umzuschalten
     private const val KEY_DPAD_CHANNEL_LIST = "dpad_channel_list"
 
+    // Tweak: OK öffnet die Programmübersicht, OK lang das Menü
+    private const val KEY_OK_OPENS_GUIDE = "ok_opens_guide"
+
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
     fun isGuideGenresHidden(context: Context): Boolean = prefs(context).getBoolean(KEY_HIDE_GUIDE_GENRES, false)
@@ -34,4 +37,9 @@ object Tweaks {
 
     fun setDpadChannelList(context: Context, enabled: Boolean) =
         prefs(context).edit().putBoolean(KEY_DPAD_CHANNEL_LIST, enabled).apply()
+
+    fun isOkOpensGuide(context: Context): Boolean = prefs(context).getBoolean(KEY_OK_OPENS_GUIDE, false)
+
+    fun setOkOpensGuide(context: Context, enabled: Boolean) =
+        prefs(context).edit().putBoolean(KEY_OK_OPENS_GUIDE, enabled).apply()
 }

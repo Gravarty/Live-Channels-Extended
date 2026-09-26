@@ -17,4 +17,6 @@
     <string name="tweak_channel_card_logo_description">Shows the channel logo instead of the program image</string>
     <string name="tweak_dpad_channel_list">Up/down opens channel list</string>
     <string name="tweak_dpad_channel_list_description">Pick a channel and confirm with OK instead of switching right away</string>
+    <string name="tweak_ok_opens_guide">OK opens program guide</string>
+    <string name="tweak_ok_opens_guide_description">Long-press OK opens the menu</string>
 </resources>

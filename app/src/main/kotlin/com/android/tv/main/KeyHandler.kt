@@ -48,6 +48,9 @@ class KeyHandler(
         KeyEvent.KEYCODE_SEARCH, KeyEvent.KEYCODE_WINDOW,
     )
 
+    // Tweak: true, sobald OK-Langdruck das Menü geöffnet hat; restliche OK-Events bis ACTION_UP werden verworfen
+    private var okLongPressHandled = false
+
     fun onPause() { backKeyPressed = false }
 
     /** Tasten, die die TvView nicht verarbeitet hat. */
@@ -64,6 +67,11 @@ class KeyHandler(
 
     /** Aus Activity.dispatchKeyEvent; [superDispatch] = Standardverarbeitung der Activity. */
     fun dispatchKeyEvent(event: KeyEvent, superDispatch: (KeyEvent) -> Boolean): Boolean {
+        // Tweak: Wiederholungen und ACTION_UP des OK-Langdrucks nicht ans geöffnete Menü weitergeben
+        if (okLongPressHandled && isOkKey(event.keyCode)) {
+            if (event.action == KeyEvent.ACTION_UP) okLongPressHandled = false
+            return true
+        }
         if (event.keyCode == KeyEvent.KEYCODE_BACK) {
             // BACK_UP ohne BACK_DOWN ignorieren (von einer anderen Activity übrig)
             if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) backKeyPressed = true
@@ -102,6 +110,15 @@ class KeyHandler(
         if (activity.searchFragment.isVisible) return null
         if (!channelTuner.areAllChannelsLoaded()) return false
         if (!channelTuner.isCurrentChannelPassthrough) {
+            // Tweak: OK öffnet die Programmübersicht (in onKeyUp), OK lang das Menü
+            if (isOkKey(keyCode) && Tweaks.isOkOpensGuide(activity) && channelTuner.browsableChannelCount > 0) {
+                if (event.isLongPress && !okLongPressHandled) {
+                    okLongPressHandled = true
+                    overlayManager.updateChannelBannerAndShowIfNeeded(TvOverlayManager.UPDATE_CHANNEL_BANNER_REASON_FORCE_SHOW)
+                    overlayManager.showMenu(Menu.REASON_NONE)
+                }
+                return true
+            }
             // Tweak: Hoch/Runter öffnet die Senderliste statt umzuschalten
             if ((keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_DOWN) &&
                 Tweaks.isDpadChannelList(activity) && channelTuner.browsableChannelCount > 0
@@ -205,6 +222,11 @@ class KeyHandler(
                 KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_E,
                 KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_MENU -> {
                     if (event.isCanceled) return true // Menü-Langdruck
+                    // Tweak: OK öffnet die Programmübersicht
+                    if (isOkKey(keyCode) && Tweaks.isOkOpensGuide(activity)) {
+                        overlayManager.showProgramGuide()
+                        return true
+                    }
                     if (keyCode != KeyEvent.KEYCODE_MENU) {
                         overlayManager.updateChannelBannerAndShowIfNeeded(TvOverlayManager.UPDATE_CHANNEL_BANNER_REASON_FORCE_SHOW)
                     }
@@ -272,6 +294,10 @@ class KeyHandler(
         } ?: return
         overlayManager.showDialogFragment(PinDialogFragment.DIALOG_TAG, dialog, false)
     }
+
+    // Tweak: OK-Tasten für "OK öffnet Programmübersicht"
+    private fun isOkKey(keyCode: Int): Boolean = keyCode == KeyEvent.KEYCODE_DPAD_CENTER ||
+        keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER
 
     /** Langdruck auf Zurück ist im Original deaktiviert (USE_BACK_KEY_LONG_PRESS = false). */
     fun onKeyLongPress(keyCode: Int, event: KeyEvent): Boolean = false

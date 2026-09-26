@@ -54,5 +54,20 @@ class TweaksFragment : SideFragment<Item>() {
                 Tweaks.setDpadChannelList(requireContext(), isChecked)
             }
         },
+        // Tweak: OK öffnet die Programmübersicht
+        object : SwitchItem(
+            getString(R.string.tweak_ok_opens_guide), getString(R.string.tweak_ok_opens_guide),
+            getString(R.string.tweak_ok_opens_guide_description),
+        ) {
+            override fun onUpdate() {
+                super.onUpdate()
+                setChecked(Tweaks.isOkOpensGuide(requireContext()))
+            }
+
+            override fun onSelected() {
+                super.onSelected()
+                Tweaks.setOkOpensGuide(requireContext(), isChecked)
+            }
+        },
     )
 }
