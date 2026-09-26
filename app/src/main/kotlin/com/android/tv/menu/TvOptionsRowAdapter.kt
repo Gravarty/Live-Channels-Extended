@@ -27,14 +27,14 @@ class TvOptionsRowAdapter(context: Context, customActions: List<CustomAction>?) 
 
     override fun createBaseActions(): List<MenuAction> {
         val actionList = ArrayList<MenuAction>()
-        // Extended: Quelle als erstes Tile
-        actionList.add(MenuAction.SOURCE_ACTION)
         actionList.add(MenuAction.SELECT_CLOSED_CAPTION_ACTION)
         actionList.add(MenuAction.SELECT_DISPLAY_MODE_ACTION)
         if (TvFeatures.isPictureInPictureEnabled(mainActivity)) actionList.add(MenuAction.SYSTEMWIDE_PIP_ACTION)
         actionList.add(MenuAction.SELECT_AUDIO_LANGUAGE_ACTION)
         // "Weitere Kanäle" nur mit Store-URL (im AOSP-Build leer)
         if (OnboardingUtils.createOnlineStoreIntent() != null) actionList.add(MenuAction.MORE_CHANNELS_ACTION)
+        // Extended: Quelle direkt vor Einstellungen
+        actionList.add(MenuAction.SOURCE_ACTION)
         actionList.add(MenuAction.SETTINGS_ACTION)
         updateClosedCaptionAction()
         updatePipAction()

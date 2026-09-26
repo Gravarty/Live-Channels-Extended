@@ -7,6 +7,8 @@ New features are marked with `Extended:` in the code, their strings live in `str
 - **Source:** Tile in the TV options. Splits the channel list by tuner/service (e.g. DVB tuner, HTS).
   Channel up/down, program guide, recent channels, channel list and search only show the selected source.
   Switching tunes the last watched channel of that source. If a source disappears, the app switches automatically.
+  The tile sits right before Settings.
+- **Settings cleaned up:** "Send feedback" and "Interactive app settings" removed.
 
 ## Base
 
