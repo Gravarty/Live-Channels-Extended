@@ -83,7 +83,6 @@ class KeypadChannelSwitchView @JvmOverloads constructor(
         channelItemListView.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 selectedChannel = if (position >= adapter.count) null else adapter.getItem(position)
-                if (browseMode) channelNumberView.text = selectedChannel?.displayNumber.orEmpty()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) { selectedChannel = null }
@@ -141,6 +140,7 @@ class KeypadChannelSwitchView @JvmOverloads constructor(
 
     private fun reset() {
         browseMode = false
+        channelNumberView.visibility = VISIBLE
         typedChannelNumber.reset()
         selectedChannel = null
         channelCandidates.clear()
@@ -152,6 +152,7 @@ class KeypadChannelSwitchView @JvmOverloads constructor(
     /** Tweak: alle Kanäle zeigen, [current] vorauswählen. Umschalten nur mit OK. */
     fun startBrowse(current: Channel?) {
         browseMode = true
+        channelNumberView.visibility = GONE // ohne große Nummer oben
         channelCandidates.clear()
         channelCandidates.addAll(channels.orEmpty())
         adapter.notifyDataSetChanged()
@@ -160,7 +161,6 @@ class KeypadChannelSwitchView @JvmOverloads constructor(
             channelItemListView.requestFocus()
             channelItemListView.setSelection(position)
             selectedChannel = channelCandidates[position]
-            channelNumberView.text = selectedChannel?.displayNumber.orEmpty()
         }
         updateViewHeight()
         scheduleHide()
@@ -168,6 +168,7 @@ class KeypadChannelSwitchView @JvmOverloads constructor(
 
     fun onNumberKeyUp(num: Int) {
         browseMode = false // Tweak: Zifferneingabe beendet den Browse-Modus
+        channelNumberView.visibility = VISIBLE
         // Maximale Stellenzahl erreicht: neu beginnen
         if (!typedChannelNumber.hasDelimiter && typedChannelNumber.majorNumber.length >= MAX_CHANNEL_NUMBER_DIGIT) {
             Log.i(TAG, "Channel number reset because majorNumber.length = ${typedChannelNumber.majorNumber.length}")
@@ -218,7 +219,9 @@ class KeypadChannelSwitchView @JvmOverloads constructor(
     }
 
     private fun updateViewHeight() {
-        val targetHeight = baseViewHeight + itemHeight * min(MAX_CHANNEL_ITEM, adapter.count)
+        // Tweak: im Browse-Modus ohne Nummernzeile nur die Innenabstände
+        val base = if (browseMode) paddingTop + paddingBottom else baseViewHeight
+        val targetHeight = base + itemHeight * min(MAX_CHANNEL_ITEM, adapter.count)
         resizeAnimator?.cancel()
         resizeAnimator = null
         if (currentHeight == 0) {
