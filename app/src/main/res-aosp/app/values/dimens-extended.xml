@@ -3,4 +3,8 @@
 <resources>
     <!-- Tweak: Tabellenrand links ohne Genre-Leiste -->
     <dimen name="extended_guide_table_margin_start">24dp</dimen>
+    <!-- Tweak: Senderlogo im Kanal-Tile, unten Platz für Name und Fortschritt -->
+    <dimen name="extended_card_logo_padding_horizontal">12dp</dimen>
+    <dimen name="extended_card_logo_padding_top">8dp</dimen>
+    <dimen name="extended_card_logo_padding_bottom">24dp</dimen>
 </resources>

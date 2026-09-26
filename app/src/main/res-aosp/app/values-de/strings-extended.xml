@@ -13,4 +13,6 @@
     <string name="settings_tweaks">Anpassungen</string>
     <string name="tweak_hide_guide_genres">Genre-Leiste ausblenden</string>
     <string name="tweak_hide_guide_genres_description">Programmübersicht ohne Genre-Filter links</string>
+    <string name="tweak_channel_card_logo">Senderlogo in Kanal-Tiles</string>
+    <string name="tweak_channel_card_logo_description">Zeigt das Senderlogo statt des Sendungsbildes</string>
 </resources>

@@ -12,6 +12,7 @@ New features are marked with `Extended:` in the code, their strings live in `str
 - **Interactive TV apps (TIAF/HbbTV) removed:** no effect on the target device (no interactive app service).
 - **Tweaks** (Settings → Tweaks, all off by default):
   - *Hide genre bar:* removes the genre filter from the program guide; the guide grows to the left.
+  - *Channel logo in channel tiles:* the recent channel tiles in the menu show the channel logo instead of the program image.
 
 ## Base
 

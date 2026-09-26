@@ -24,5 +24,20 @@ class TweaksFragment : SideFragment<Item>() {
                 Tweaks.setGuideGenresHidden(requireContext(), isChecked)
             }
         },
+        // Tweak: Senderlogo in den Kanal-Tiles
+        object : SwitchItem(
+            getString(R.string.tweak_channel_card_logo), getString(R.string.tweak_channel_card_logo),
+            getString(R.string.tweak_channel_card_logo_description),
+        ) {
+            override fun onUpdate() {
+                super.onUpdate()
+                setChecked(Tweaks.isChannelCardLogo(requireContext()))
+            }
+
+            override fun onSelected() {
+                super.onSelected()
+                Tweaks.setChannelCardLogo(requireContext(), isChecked)
+            }
+        },
     )
 }

@@ -10,6 +10,7 @@ import com.android.tv.MainActivity
 import com.android.tv.R
 import com.android.tv.data.api.Channel
 import com.android.tv.data.api.Program
+import com.android.tv.tweaks.Tweaks
 import com.android.tv.util.images.ImageLoader
 
 /**
@@ -30,6 +31,9 @@ class ChannelCardView @JvmOverloads constructor(
     private var channel: Channel? = null
     private var program: Program? = null
     private var posterArtUri: String? = null
+    // Tweak: Senderlogo statt Posterbild
+    private var showChannelLogo = false
+    private var logoChannelId: Long? = null
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -40,6 +44,7 @@ class ChannelCardView @JvmOverloads constructor(
     }
 
     override fun onBind(item: ChannelsRowItem, selected: Boolean) {
+        applyChannelLogoTweak()
         updateChannel(item)
         updateProgram()
         super.onBind(item, selected)
@@ -74,7 +79,7 @@ class ChannelCardView @JvmOverloads constructor(
         val p = program
         if (p == null) {
             progressBar.visibility = GONE
-            setPosterArt(null)
+            if (showChannelLogo) setChannelLogo(ch) else setPosterArt(null)
         } else {
             progressBar.visibility = VISIBLE
             val start = p.startTimeUtcMillis
@@ -85,8 +90,45 @@ class ChannelCardView @JvmOverloads constructor(
                 now >= end -> 100
                 else -> (100 * (now - start) / (end - start)).toInt()
             }
-            setPosterArt(p.posterArtUri)
+            if (showChannelLogo) setChannelLogo(ch) else setPosterArt(p.posterArtUri)
         }
+    }
+
+    /** Tweak: Bildbereich für Logo (eingerückt, ganz sichtbar) oder Poster (randlos) einrichten. */
+    private fun applyChannelLogoTweak() {
+        val enabled = Tweaks.isChannelCardLogo(context)
+        if (enabled == showChannelLogo) return
+        showChannelLogo = enabled
+        logoChannelId = null
+        posterArtUri = POSTER_NOT_SET
+        if (enabled) {
+            val h = resources.getDimensionPixelSize(R.dimen.extended_card_logo_padding_horizontal)
+            imageView.setPaddingRelative(h, resources.getDimensionPixelSize(R.dimen.extended_card_logo_padding_top),
+                h, resources.getDimensionPixelSize(R.dimen.extended_card_logo_padding_bottom))
+            imageView.scaleType = ImageView.ScaleType.FIT_CENTER
+        } else {
+            imageView.setPaddingRelative(0, 0, 0, 0)
+            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+        }
+    }
+
+    /** Tweak: Senderlogo laden; ohne Logo das Standardbild. */
+    private fun setChannelLogo(ch: Channel) {
+        if (logoChannelId == ch.id) return
+        logoChannelId = ch.id
+        imageView.setImageDrawable(null)
+        imageView.foreground = null
+        ch.loadBitmap(context, Channel.LOAD_IMAGE_TYPE_CHANNEL_LOGO, cardImageWidth, cardImageHeight,
+            object : ImageLoader.ImageLoaderCallback<ChannelCardView>(this) {
+                override fun onBitmapLoaded(referent: ChannelCardView, bitmap: Bitmap?) {
+                    if (!referent.showChannelLogo || referent.channel?.id != ch.id) return
+                    if (bitmap != null) {
+                        referent.imageView.setImageBitmap(bitmap)
+                    } else {
+                        referent.imageView.setImageResource(R.drawable.ic_recent_thumbnail_default)
+                    }
+                }
+            })
     }
 
     private fun setPosterArt(posterArtUri: String?) {
@@ -107,6 +149,9 @@ class ChannelCardView @JvmOverloads constructor(
     }
 
     companion object {
+        // Tweak: erzwingt Neuladen des Posters nach dem Umschalten
+        private const val POSTER_NOT_SET = "extended:not_set"
+
         private fun createProgramPosterArtCallback(cardView: ChannelCardView, program: Program) =
             object : ImageLoader.ImageLoaderCallback<ChannelCardView>(cardView) {
                 override fun onBitmapLoaded(referent: ChannelCardView, bitmap: Bitmap?) {
