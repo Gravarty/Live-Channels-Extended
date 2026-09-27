@@ -177,6 +177,8 @@ class ChannelBannerView @JvmOverloads constructor(
     }
 
     override fun onEnterAction(fromEmptyScene: Boolean) {
+        // Tweak: geänderten Schalter bei jedem Einblenden übernehmen (auch über die Info-Taste), nicht erst beim Senderwechsel
+        if (providerLogoHidden != Tweaks.isProviderLogoHidden(context)) updateChannelInfo()
         resetAnimationEffects()
         if (fromEmptyScene) ViewUtils.setTransitionAlpha(channelView, 1f)
         autoHideScheduler.schedule(showDurationMillis)
@@ -221,9 +223,6 @@ class ChannelBannerView @JvmOverloads constructor(
             currentChannel = currentChannelProvider.get()
             currentChannelLogoExists = currentChannel?.channelLogoExists() == true
             updateStreamInfo(null)
-            updateChannelInfo()
-        } else if (providerLogoHidden != Tweaks.isProviderLogoHidden(context)) {
-            // Tweak: geänderten Schalter sofort übernehmen, nicht erst beim nächsten Senderwechsel
             updateChannelInfo()
         }
         updateProgramInfo(currentProgramProvider.get())
