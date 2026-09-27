@@ -196,6 +196,8 @@
     <string name="dvr_msg_cannot_record_program" msgid="4184046342810946090">"Diese Sendung kann nicht aufgenommen werden."</string>
     <string name="dvr_msg_program_scheduled" msgid="3800847542300367572">"Aufnahme von <xliff:g id="PROGRAMNAME">%1$s</xliff:g> geplant"</string>
     <string name="dvr_msg_current_program_scheduled" msgid="2505247201782991463">"\"<xliff:g id="PROGRAMNAME">%1$s</xliff:g>\" wird ab jetzt bis <xliff:g id="ENDTIME">%2$s</xliff:g> aufgenommen"</string>
+    <!-- Bugfix: im Original ohne deutsche Übersetzung -->
+    <string name="dvr_history_card_view_title">Aufnahmeverlauf</string>
     <string name="dvr_full_schedule_card_view_title" msgid="7198521806965950089">"Programmübersicht"</string>
     <plurals name="dvr_full_schedule_card_view_content" formatted="false" msgid="790788122541080768">
       <item quantity="other">Nächste %1$d Tage</item>
