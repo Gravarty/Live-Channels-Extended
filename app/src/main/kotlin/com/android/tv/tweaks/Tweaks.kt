@@ -27,6 +27,9 @@ object Tweaks {
     // Tweak: Zurück muss zum Beenden zweimal gedrückt werden
     private const val KEY_CONFIRM_EXIT = "confirm_exit"
 
+    // Tweak: Play/Pause beim Spulen spielt sofort normal ab, statt zu pausieren
+    private const val KEY_PLAY_RESUMES_TRICK_PLAY = "play_resumes_trick_play"
+
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
     fun isGuideGenresHidden(context: Context): Boolean = prefs(context).getBoolean(KEY_HIDE_GUIDE_GENRES, false)
@@ -58,4 +61,9 @@ object Tweaks {
 
     fun setConfirmExit(context: Context, enabled: Boolean) =
         prefs(context).edit().putBoolean(KEY_CONFIRM_EXIT, enabled).apply()
+
+    fun isPlayResumesTrickPlay(context: Context): Boolean = prefs(context).getBoolean(KEY_PLAY_RESUMES_TRICK_PLAY, false)
+
+    fun setPlayResumesTrickPlay(context: Context, enabled: Boolean) =
+        prefs(context).edit().putBoolean(KEY_PLAY_RESUMES_TRICK_PLAY, enabled).apply()
 }

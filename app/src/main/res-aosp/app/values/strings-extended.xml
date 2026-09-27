@@ -24,4 +24,6 @@
     <string name="tweak_confirm_exit">Confirm to exit</string>
     <string name="tweak_confirm_exit_description">Press Back twice to close the app</string>
     <string name="tweak_confirm_exit_toast">Press again to exit.</string>
+    <string name="tweak_play_resumes_trick_play">Play resumes after seeking</string>
+    <string name="tweak_play_resumes_trick_play_description">While rewinding or fast-forwarding, Play/Pause resumes normal playback instead of pausing</string>
 </resources>

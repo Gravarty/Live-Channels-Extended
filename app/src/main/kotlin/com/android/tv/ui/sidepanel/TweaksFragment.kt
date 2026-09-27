@@ -99,5 +99,20 @@ class TweaksFragment : SideFragment<Item>() {
                 Tweaks.setConfirmExit(requireContext(), isChecked)
             }
         },
+        // Tweak: Play setzt Spulen fort
+        object : SwitchItem(
+            getString(R.string.tweak_play_resumes_trick_play), getString(R.string.tweak_play_resumes_trick_play),
+            getString(R.string.tweak_play_resumes_trick_play_description),
+        ) {
+            override fun onUpdate() {
+                super.onUpdate()
+                setChecked(Tweaks.isPlayResumesTrickPlay(requireContext()))
+            }
+
+            override fun onSelected() {
+                super.onSelected()
+                Tweaks.setPlayResumesTrickPlay(requireContext(), isChecked)
+            }
+        },
     )
 }

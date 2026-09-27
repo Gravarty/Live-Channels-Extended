@@ -24,4 +24,6 @@
     <string name="tweak_confirm_exit">Bestätigen zum Beenden</string>
     <string name="tweak_confirm_exit_description">Zum Beenden der App zweimal Zurück drücken</string>
     <string name="tweak_confirm_exit_toast">Erneut drücken, um zu beenden.</string>
+    <string name="tweak_play_resumes_trick_play">Play setzt Spulen fort</string>
+    <string name="tweak_play_resumes_trick_play_description">Beim Vor- oder Zurückspulen spielt Play/Pause normal weiter, statt zu pausieren</string>
 </resources>

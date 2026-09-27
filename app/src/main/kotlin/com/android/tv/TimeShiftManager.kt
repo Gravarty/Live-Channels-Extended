@@ -17,6 +17,7 @@ import com.android.tv.ui.api.TunableTvViewPlayingApi.TimeShiftListener
 import com.android.tv.util.TimeShiftUtils
 import com.android.tv.util.TvProviderUtils
 import com.android.tv.util.Utils
+import com.android.tv.tweaks.Tweaks
 import java.util.LinkedList
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
@@ -101,7 +102,14 @@ class TimeShiftManager(
         updateActions()
     }
 
-    fun togglePlayPause() = playController.togglePlayPause()
+    fun togglePlayPause() {
+        // Tweak: Play setzt Spulen fort – beim Spulen normal abspielen statt pausieren
+        if (Tweaks.isPlayResumesTrickPlay(context) && playController.isTrickPlaying()) {
+            play()
+            return
+        }
+        playController.togglePlayPause()
+    }
 
     fun rewind() {
         if (!isActionEnabled(TIME_SHIFT_ACTION_ID_REWIND)) return
@@ -376,6 +384,10 @@ class TimeShiftManager(
         }
 
         fun togglePlayPause() = if (playStatus == PLAY_STATUS_PAUSED) play() else pause()
+
+        // Tweak: Play setzt Spulen fort – true beim Rück- oder Vorspulen
+        fun isTrickPlaying(): Boolean = playStatus == PLAY_STATUS_PLAYING &&
+            (playDirection == PLAY_DIRECTION_BACKWARD || displayedPlaySpeed != PLAY_SPEED_1X)
 
         fun rewind() {
             if (playDirection == PLAY_DIRECTION_BACKWARD) increaseDisplayedPlaySpeed() else displayedPlaySpeed = PLAY_SPEED_2X

@@ -17,6 +17,7 @@ New features are marked with `Extended:` in the code, their strings live in `str
   - *OK opens program guide:* OK opens the program guide directly. Long-press OK opens the menu (for remotes without a menu key).
   - *Hide provider logo:* hides the TV input app icon (e.g. TVHeadend) in the channel banner and the program guide.
   - *Confirm to exit:* the first Back press shows a hint, a second press within 2 s closes the app.
+  - *Play resumes after seeking:* while rewinding or fast-forwarding, the remote's Play/Pause key resumes normal playback instead of pausing.
 
 ## Base
 
