@@ -33,6 +33,9 @@ object Tweaks {
     // Tweak: DVR über den Tvheadend-Server des HTS-Plugins (wirkt nach App-Neustart)
     private const val KEY_TVHEADEND_DVR = "tvheadend_dvr"
 
+    // Tweak: Bei Aufnahme fragen – Klick auf eine künftige Sendung in der Programmübersicht fragt nach
+    private const val KEY_CONFIRM_RECORD = "confirm_record"
+
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
     fun isGuideGenresHidden(context: Context): Boolean = prefs(context).getBoolean(KEY_HIDE_GUIDE_GENRES, false)
@@ -74,4 +77,9 @@ object Tweaks {
 
     fun setTvheadendDvr(context: Context, enabled: Boolean) =
         prefs(context).edit().putBoolean(KEY_TVHEADEND_DVR, enabled).apply()
+
+    fun isConfirmRecord(context: Context): Boolean = prefs(context).getBoolean(KEY_CONFIRM_RECORD, false)
+
+    fun setConfirmRecord(context: Context, enabled: Boolean) =
+        prefs(context).edit().putBoolean(KEY_CONFIRM_RECORD, enabled).apply()
 }

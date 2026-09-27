@@ -20,6 +20,8 @@ import com.android.tv.dvr.data.ScheduledRecording
 import com.android.tv.dvr.ui.DvrUiHelper
 import com.android.tv.features.TvFeatures
 import com.android.tv.guide.ProgramManager.TableEntry
+import com.android.tv.tweaks.ConfirmRecord
+import com.android.tv.tweaks.Tweaks
 import com.android.tv.util.Utils
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
@@ -80,7 +82,10 @@ class ProgramItemView @JvmOverloads constructor(
         } else if (entry.program != null && TvFeatures.isDvrEnabled(context)) {
             val manager = singletons.getDvrManager() ?: return
             if (entry.entryStartUtcMillis > clock.currentTimeMillis() && manager.isProgramRecordable(entry.program)) {
-                if (entry.scheduledRecording == null) {
+                // Tweak: Bei Aufnahme fragen – Folgen ohne Aufnahmeplan weiter über den Stock-Dialog
+                if (Tweaks.isConfirmRecord(context) && (entry.scheduledRecording != null || !entry.program.isEpisodic)) {
+                    ConfirmRecord.show(tvActivity, entry.program, entry.scheduledRecording)
+                } else if (entry.scheduledRecording == null) {
                     // DvrFlags.startEarlyEndLateEnabled() ist im AOSP-Build false
                     val inputId = channel?.inputId ?: return // Bugfix: Kanal fehlt (Original: NPE)
                     DvrUiHelper.checkStorageStatusAndShowErrorMessage(tvActivity, inputId) {

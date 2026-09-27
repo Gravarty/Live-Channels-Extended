@@ -12,6 +12,9 @@ import com.android.tv.common.SoftPreconditions
 import com.android.tv.data.ProgramImpl
 import com.android.tv.dvr.data.SeriesRecording
 import com.android.tv.dvr.ui.DvrConflictFragment.DvrProgramConflictFragment
+import com.android.tv.tweaks.htsdvr.HtsDvrAutorecs
+import com.android.tv.tweaks.htsdvr.HtsDvrTimers
+import com.android.tv.util.Utils
 
 /**
  * Fragt, ob eine Folge oder die ganze Serie aufgenommen werden soll.
@@ -77,6 +80,13 @@ class DvrScheduleFragment : DvrGuidedStepFragment() {
                 GuidedStepSupportFragment.add(parentFragmentManager, fragment, R.id.halfsized_dialog_host)
             }
         } else if (action.id == ACTION_RECORD_SERIES.toLong()) {
+            // Tweak: Tvheadend-DVR – Serien-Timer auf dem Server statt lokaler Serie
+            val inputId = Utils.getTvInputInfoForProgram(requireContext(), program)?.id
+            if (HtsDvrTimers.handlesInput(requireContext(), inputId)) {
+                HtsDvrAutorecs.addAutorec(requireContext(), program)
+                dismissDialog()
+                return
+            }
             val singletons = TvSingletons.getSingletons(requireContext())
             var seriesRecording = program.seriesId?.let { singletons.getDvrDataManager().getSeriesRecording(it) }
             if (seriesRecording == null) {

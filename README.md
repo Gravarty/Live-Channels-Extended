@@ -18,7 +18,8 @@ New features are marked with `Extended:` in the code, their strings live in `str
   - *Hide provider logo:* hides the TV input app icon (e.g. TVHeadend) in the channel banner and the program guide.
   - *Confirm to exit:* the first Back press shows a hint, a second press within 2 s closes the app.
   - *Play resumes after seeking:* while rewinding or fast-forwarding, the remote's Play/Pause key resumes normal playback instead of pausing.
-  - *Tvheadend DVR:* enables DVR (also without system app) for the HTS plugin (com.gravarty.hts). Recordings are scheduled on the Tvheadend server via the plugin's DVR provider instead of the local scheduler; server timers show up as scheduled in the program guide. Takes effect after restarting the app.
+  - *HTS DVR:* enables DVR (also without system app) for the HTS plugin (com.gravarty.hts). Recordings are scheduled on the Tvheadend server via the plugin's DVR provider instead of the local scheduler; server timers show up as scheduled in the program guide. "Record series" creates a series timer (autorec) on the server, and deleting a recording deletes it on the server. The DVR card in the TV menu is renamed to *Recordings*, and a *Schedule* card next to it lists the server's series and time timers, which can be deleted there. Takes effect after restarting the app.
+  - *Ask before recording:* selecting an upcoming program in the program guide asks before scheduling or canceling a recording (episodes keep the stock "Episode / Series" dialog).
 
 ## Base
 

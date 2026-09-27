@@ -24,6 +24,7 @@ import com.android.tv.dvr.data.ScheduledRecording
 import com.android.tv.dvr.data.SeriesRecording
 import com.android.tv.util.Utils
 import com.android.tv.tweaks.htsdvr.HtsDvrTimers
+import com.android.tv.tweaks.htsdvr.HtsDvrRecordings
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import javax.inject.Inject
@@ -288,6 +289,11 @@ class DvrManager @Inject constructor(@ApplicationContext context: Context) {
 
     fun removeRecordedProgram(recordedProgram: RecordedProgram, deleteFile: Boolean) {
         if (!SoftPreconditions.checkState(dataManager.isInitialized)) return
+        // Tweak: Tvheadend-DVR – Aufnahme auf dem Server löschen
+        if (HtsDvrTimers.handlesInput(appContext, recordedProgram.inputId)) {
+            HtsDvrRecordings.deleteRecordings(appContext, listOf(recordedProgram))
+            return
+        }
         scope.launch {
             val deleted = withContext(dbDispatcher) { appContext.contentResolver.delete(recordedProgram.uri, null, null) }
             if (deleted > 0 && deleteFile) withContext(Dispatchers.IO) { removeRecordedData(recordedProgram.dataUri) }
@@ -297,8 +303,13 @@ class DvrManager @Inject constructor(@ApplicationContext context: Context) {
     fun removeRecordedPrograms(recordedProgramIds: List<Long>, deleteFiles: Boolean) {
         val ops = ArrayList<ContentProviderOperation>()
         val dataUris = ArrayList<Uri?>()
+        // Tweak: Tvheadend-DVR – Aufnahmen des HTS-Plugins auf dem Server löschen
+        val htsRecordings = recordedProgramIds.mapNotNull { dataManager.getRecordedProgram(it) }
+            .filter { HtsDvrTimers.handlesInput(appContext, it.inputId) }
+        HtsDvrRecordings.deleteRecordings(appContext, htsRecordings)
         for (id in recordedProgramIds) {
             val r = dataManager.getRecordedProgram(id) ?: continue
+            if (r in htsRecordings) continue // Tweak: Tvheadend-DVR
             dataUris.add(r.dataUri)
             ops.add(ContentProviderOperation.newDelete(r.uri).build())
         }

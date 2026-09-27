@@ -26,7 +26,20 @@
     <string name="tweak_confirm_exit_toast">Erneut drücken, um zu beenden.</string>
     <string name="tweak_play_resumes_trick_play">Play setzt Spulen fort</string>
     <string name="tweak_play_resumes_trick_play_description">Beim Vor- oder Zurückspulen spielt Play/Pause normal weiter, statt zu pausieren</string>
-    <string name="tweak_tvheadend_dvr">Tvheadend-DVR</string>
+    <string name="tweak_tvheadend_dvr">HTS-DVR</string>
     <string name="tweak_tvheadend_dvr_description">Aufnahmen über den Tvheadend-Server des HTS-Plugins. Wirkt nach einem Neustart der App.</string>
     <string name="tweak_tvheadend_dvr_error">Der Tvheadend-Server hat die Änderung nicht übernommen.</string>
+    <string name="tweak_tvheadend_dvr_series_added">Serien-Timer für „%1$s“ auf dem Tvheadend-Server angelegt.</string>
+    <string name="tweak_hts_timers">Zeitplan</string>
+    <string name="tweak_hts_timers_loading">Wird geladen…</string>
+    <string name="tweak_hts_timers_empty">Keine Serien- oder Zeit-Timer vorhanden.</string>
+    <string name="tweak_hts_timers_series">Serien-Timer</string>
+    <string name="tweak_hts_timers_time">Zeit-Timer</string>
+    <string name="tweak_hts_timers_delete">Löschen</string>
+    <string name="tweak_hts_timers_deleted">Timer gelöscht.</string>
+    <string name="tweak_hts_dvr_recordings">Aufnahmen</string>
+    <string name="tweak_confirm_record">Bei Aufnahme fragen</string>
+    <string name="tweak_confirm_record_description">Beim Auswählen einer künftigen Sendung in der Programmübersicht wird vor dem Planen oder Abbrechen einer Aufnahme nachgefragt.</string>
+    <string name="tweak_confirm_record_record">Aufnehmen</string>
+    <string name="tweak_confirm_record_back">Zurück</string>
 </resources>

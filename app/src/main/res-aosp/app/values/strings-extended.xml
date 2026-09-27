@@ -26,7 +26,20 @@
     <string name="tweak_confirm_exit_toast">Press again to exit.</string>
     <string name="tweak_play_resumes_trick_play">Play resumes after seeking</string>
     <string name="tweak_play_resumes_trick_play_description">While rewinding or fast-forwarding, Play/Pause resumes normal playback instead of pausing</string>
-    <string name="tweak_tvheadend_dvr">Tvheadend DVR</string>
+    <string name="tweak_tvheadend_dvr">HTS DVR</string>
     <string name="tweak_tvheadend_dvr_description">Record via the Tvheadend server of the HTS plugin. Takes effect after restarting the app.</string>
     <string name="tweak_tvheadend_dvr_error">Tvheadend server did not accept the change.</string>
+    <string name="tweak_tvheadend_dvr_series_added">Series timer for "%1$s" created on the Tvheadend server.</string>
+    <string name="tweak_hts_timers">Schedule</string>
+    <string name="tweak_hts_timers_loading">Loading…</string>
+    <string name="tweak_hts_timers_empty">No series or time timers.</string>
+    <string name="tweak_hts_timers_series">Series timer</string>
+    <string name="tweak_hts_timers_time">Time timer</string>
+    <string name="tweak_hts_timers_delete">Delete</string>
+    <string name="tweak_hts_timers_deleted">Timer deleted.</string>
+    <string name="tweak_hts_dvr_recordings">Recordings</string>
+    <string name="tweak_confirm_record">Ask before recording</string>
+    <string name="tweak_confirm_record_description">Selecting an upcoming program in the program guide asks before scheduling or canceling a recording.</string>
+    <string name="tweak_confirm_record_record">Record</string>
+    <string name="tweak_confirm_record_back">Back</string>
 </resources>

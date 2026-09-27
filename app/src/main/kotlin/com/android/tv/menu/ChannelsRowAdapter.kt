@@ -13,6 +13,8 @@ import com.android.tv.data.api.Channel
 import com.android.tv.dvr.DvrDataManager
 import com.android.tv.features.TvFeatures
 import com.android.tv.recommendation.Recommender
+import com.android.tv.tweaks.Tweaks
+import com.android.tv.ui.sidepanel.HtsTimersFragment
 
 /** Karten der Kanal-Zeile; mit Bedienungshilfen zusätzlich Kanal hoch/runter. */
 class ChannelsRowAdapter(
@@ -47,7 +49,13 @@ class ChannelsRowAdapter(
             R.layout.menu_card_app_link -> itemView.setOnClickListener(::onAppLinkClicked)
             R.layout.menu_card_dvr -> {
                 itemView.setOnClickListener { mainActivity.overlayManager.showDvrManager() }
-                (itemView as SimpleCardView).setText(R.string.channels_item_dvr)
+                // Tweak: HTS-DVR – Zeitpläne liegen in der Karte "Zeitplan", daher nur "Aufnahmen"
+                (itemView as SimpleCardView).setText(
+                    if (Tweaks.isTvheadendDvr(context)) R.string.tweak_hts_dvr_recordings else R.string.channels_item_dvr)
+            }
+            // Tweak: HTS-DVR – Karte "Zeitplan" öffnet die Serien- und Zeit-Timer des Servers
+            R.layout.menu_card_hts_timers -> itemView.setOnClickListener {
+                mainActivity.overlayManager.sideFragmentManager.show(HtsTimersFragment())
             }
             else -> {
                 itemView.tag = itemList[position].channel
@@ -79,6 +87,8 @@ class ChannelsRowAdapter(
         }
         if (needToShowSetupItem()) items.add(ChannelsRowItem.SETUP_ITEM)
         if (needToShowDvrItem()) items.add(ChannelsRowItem.DVR_ITEM)
+        // Tweak: HTS-DVR
+        if (needToShowHtsTimersItem()) items.add(ChannelsRowItem.HTS_TIMERS_ITEM)
         if (needToShowAppLinkItem()) {
             ChannelsRowItem.APP_LINK_ITEM.channel = ChannelImpl.Builder(mainActivity.currentChannel!!).build()
             items.add(ChannelsRowItem.APP_LINK_ITEM)
@@ -95,6 +105,8 @@ class ChannelsRowAdapter(
         if (updateItem(showChannelUpDown, ChannelsRowItem.DOWN_ITEM, currentIndex)) ++currentIndex
         if (updateItem(needToShowSetupItem(), ChannelsRowItem.SETUP_ITEM, currentIndex)) ++currentIndex
         if (updateItem(needToShowDvrItem(), ChannelsRowItem.DVR_ITEM, currentIndex)) ++currentIndex
+        // Tweak: HTS-DVR
+        if (updateItem(needToShowHtsTimersItem(), ChannelsRowItem.HTS_TIMERS_ITEM, currentIndex)) ++currentIndex
         if (updateItem(needToShowAppLinkItem(), ChannelsRowItem.APP_LINK_ITEM, currentIndex)) {
             val current = mainActivity.currentChannel!!
             if (!current.hasSameReadOnlyInfo(ChannelsRowItem.APP_LINK_ITEM.channel)) {
@@ -136,6 +148,9 @@ class ChannelsRowAdapter(
     private fun needToShowDvrItem(): Boolean =
         dvrDataManager != null &&
             TvSingletons.getSingletons(context).getTvInputManagerHelper().getTvInputInfos(true, true).any { it.canRecord() }
+
+    /** Tweak: HTS-DVR – Karte "Zeitplan" nur mit DVR und eingeschaltetem Tweak. */
+    private fun needToShowHtsTimersItem(): Boolean = dvrDataManager != null && Tweaks.isTvheadendDvr(context)
 
     private fun needToShowAppLinkItem(): Boolean {
         val current = mainActivity.currentChannel ?: return false

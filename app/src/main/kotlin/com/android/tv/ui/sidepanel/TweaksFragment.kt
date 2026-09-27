@@ -129,5 +129,20 @@ class TweaksFragment : SideFragment<Item>() {
                 Tweaks.setTvheadendDvr(requireContext(), isChecked)
             }
         },
+        // Tweak: Bei Aufnahme fragen
+        object : SwitchItem(
+            getString(R.string.tweak_confirm_record), getString(R.string.tweak_confirm_record),
+            getString(R.string.tweak_confirm_record_description),
+        ) {
+            override fun onUpdate() {
+                super.onUpdate()
+                setChecked(Tweaks.isConfirmRecord(requireContext()))
+            }
+
+            override fun onSelected() {
+                super.onSelected()
+                Tweaks.setConfirmRecord(requireContext(), isChecked)
+            }
+        },
     )
 }
