@@ -30,6 +30,9 @@ object Tweaks {
     // Tweak: Play/Pause beim Spulen spielt sofort normal ab, statt zu pausieren
     private const val KEY_PLAY_RESUMES_TRICK_PLAY = "play_resumes_trick_play"
 
+    // Tweak: DVR über den Tvheadend-Server des HTS-Plugins (wirkt nach App-Neustart)
+    private const val KEY_TVHEADEND_DVR = "tvheadend_dvr"
+
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
     fun isGuideGenresHidden(context: Context): Boolean = prefs(context).getBoolean(KEY_HIDE_GUIDE_GENRES, false)
@@ -66,4 +69,9 @@ object Tweaks {
 
     fun setPlayResumesTrickPlay(context: Context, enabled: Boolean) =
         prefs(context).edit().putBoolean(KEY_PLAY_RESUMES_TRICK_PLAY, enabled).apply()
+
+    fun isTvheadendDvr(context: Context): Boolean = prefs(context).getBoolean(KEY_TVHEADEND_DVR, false)
+
+    fun setTvheadendDvr(context: Context, enabled: Boolean) =
+        prefs(context).edit().putBoolean(KEY_TVHEADEND_DVR, enabled).apply()
 }

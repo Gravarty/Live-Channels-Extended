@@ -28,5 +28,7 @@ object TvFeatures {
     /** DVR: im Original nur für System-Apps (SystemAppFeature). */
     @JvmStatic
     fun isDvrEnabled(context: Context): Boolean =
-        context.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0
+        context.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0 ||
+            // Tweak: Tvheadend-DVR schaltet DVR auch ohne System-App frei
+            com.android.tv.tweaks.Tweaks.isTvheadendDvr(context)
 }

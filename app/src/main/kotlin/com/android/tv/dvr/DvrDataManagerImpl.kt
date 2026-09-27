@@ -27,6 +27,8 @@ import com.android.tv.dvr.provider.DvrDbSync
 import com.android.tv.dvr.recorder.SeriesRecordingScheduler
 import com.android.tv.util.TvInputManagerHelper
 import com.android.tv.util.TvProviderUtils
+import com.android.tv.tweaks.htsdvr.HtsDvrTimers
+import com.android.tv.tweaks.Tweaks
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -177,6 +179,8 @@ class DvrDataManagerImpl @Inject constructor(
         if (recordedProgramLoadFinished) validateSeriesRecordings()
         dvrLoadFinished = true
         notifyDvrScheduleLoadFinished()
+        // Tweak: Tvheadend-DVR – Server-Timer spiegeln
+        if (Tweaks.isTvheadendDvr(context)) HtsDvrTimers.start(context, this)
         startSyncIfInitialized()
     }
 
@@ -316,6 +320,17 @@ class DvrDataManagerImpl @Inject constructor(
     override fun getSeriesRecording(seriesId: String) = seriesId2SeriesRecordings[seriesId]
 
     override fun addScheduledRecording(vararg scheduledRecordings: ScheduledRecording) {
+        // Tweak: Tvheadend-DVR – Aufnahmen des HTS-Plugins als Server-Timer anlegen statt lokal planen
+        // (nur neue, noch nicht gestartete; fertige Einträge aus Aufnahmen bleiben lokale Verwaltung)
+        val htsSchedules = scheduledRecordings.filter {
+            it.state == ScheduledRecording.STATE_RECORDING_NOT_STARTED && HtsDvrTimers.handlesInput(context, it.inputId)
+        }
+        if (htsSchedules.isNotEmpty()) {
+            htsSchedules.forEach { HtsDvrTimers.addTimer(context, it) }
+            val rest = scheduledRecordings.filter { it !in htsSchedules }
+            if (rest.isNotEmpty()) addScheduledRecording(*rest.toTypedArray())
+            return
+        }
         for (r in scheduledRecordings) {
             if (r.id == ScheduledRecording.ID_NOT_SET) r.id = IdGenerator.SCHEDULED_RECORDING.newId()
             this.scheduledRecordings[r.id] = r
@@ -345,6 +360,12 @@ class DvrDataManagerImpl @Inject constructor(
      * gemerkt (werden nicht erneut geplant), außer bei [forceRemove].
      */
     override fun removeScheduledRecording(forceRemove: Boolean, vararg scheduledRecordings: ScheduledRecording) {
+        // Tweak: Tvheadend-DVR – gespiegelte Server-Timer nicht lokal entfernen (Löschen nur über DvrManager)
+        if (scheduledRecordings.any { HtsDvrTimers.isMirrored(it.id) }) {
+            val rest = scheduledRecordings.filterNot { HtsDvrTimers.isMirrored(it.id) }
+            if (rest.isNotEmpty()) removeScheduledRecording(forceRemove, *rest.toTypedArray())
+            return
+        }
         val toDelete = ArrayList<ScheduledRecording>()
         val notToDelete = ArrayList<ScheduledRecording>()
         val seriesIdsToCheck = HashSet<Long>()
@@ -433,7 +454,9 @@ class DvrDataManagerImpl @Inject constructor(
         if (toUpdate.isEmpty()) return
         val array = toUpdate.toTypedArray()
         if (dvrLoadFinished) notifyScheduledRecordingStatusChanged(*array)
-        if (updateDb) DvrDbFuture.UpdateScheduleFuture(dbHelper).executeOnDbThread(dbCallback, *array)
+        // Tweak: Tvheadend-DVR – gespiegelte Server-Timer nicht in die eigene DB schreiben
+        val dbArray = array.filterNot { HtsDvrTimers.isMirrored(it.id) }.toTypedArray()
+        if (updateDb && dbArray.isNotEmpty()) DvrDbFuture.UpdateScheduleFuture(dbHelper).executeOnDbThread(dbCallback, *dbArray)
         checkAndRemoveEmptySeriesRecording(*seriesIdsToCheck.toLongArray())
         removeDeletedSchedules(*schedules)
     }
@@ -447,6 +470,33 @@ class DvrDataManagerImpl @Inject constructor(
         }
         if (dvrLoadFinished) notifySeriesRecordingChanged(*seriesRecordings)
         DvrDbFuture.UpdateSeriesRecordingFuture(dbHelper).executeOnDbThread(dbCallback, *seriesRecordings)
+    }
+
+    /**
+     * Tweak: Tvheadend-DVR – ersetzt alle gespiegelten Server-Timer (nur im Speicher, ohne DB) und
+     * meldet Hinzugefügte, Geänderte und Entfernte an die Listener.
+     */
+    fun setHtsTimers(timers: List<ScheduledRecording>) {
+        val newIds = timers.map { it.id }.toSet()
+        val removed = scheduledRecordings.values.filter { HtsDvrTimers.isMirrored(it.id) && it.id !in newIds }
+        val added = ArrayList<ScheduledRecording>()
+        val changed = ArrayList<ScheduledRecording>()
+        for (r in removed) {
+            scheduledRecordings.remove(r.id)
+            if (programId2ScheduledRecordings[r.programId]?.id == r.id) programId2ScheduledRecordings.remove(r.programId)
+        }
+        for (r in timers) {
+            val old = scheduledRecordings.put(r.id, r)
+            if (old != null && old.programId != r.programId && programId2ScheduledRecordings[old.programId]?.id == r.id) {
+                programId2ScheduledRecordings.remove(old.programId)
+            }
+            if (r.programId != ScheduledRecording.ID_NOT_SET) programId2ScheduledRecordings[r.programId] = r
+            if (old == null) added.add(r) else changed.add(r)
+        }
+        if (!dvrLoadFinished) return
+        if (removed.isNotEmpty()) notifyScheduledRecordingRemoved(*removed.toTypedArray())
+        if (added.isNotEmpty()) notifyScheduledRecordingAdded(*added.toTypedArray())
+        if (changed.isNotEmpty()) notifyScheduledRecordingStatusChanged(*changed.toTypedArray())
     }
 
     /** Input vorhanden (eingebauter Tuner zusätzlich nur mit eingehängtem Speicher). */

@@ -26,4 +26,7 @@
     <string name="tweak_confirm_exit_toast">Erneut drücken, um zu beenden.</string>
     <string name="tweak_play_resumes_trick_play">Play setzt Spulen fort</string>
     <string name="tweak_play_resumes_trick_play_description">Beim Vor- oder Zurückspulen spielt Play/Pause normal weiter, statt zu pausieren</string>
+    <string name="tweak_tvheadend_dvr">Tvheadend-DVR</string>
+    <string name="tweak_tvheadend_dvr_description">Aufnahmen über den Tvheadend-Server des HTS-Plugins. Wirkt nach einem Neustart der App.</string>
+    <string name="tweak_tvheadend_dvr_error">Der Tvheadend-Server hat die Änderung nicht übernommen.</string>
 </resources>

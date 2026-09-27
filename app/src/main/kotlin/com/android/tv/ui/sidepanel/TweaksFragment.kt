@@ -114,5 +114,20 @@ class TweaksFragment : SideFragment<Item>() {
                 Tweaks.setPlayResumesTrickPlay(requireContext(), isChecked)
             }
         },
+        // Tweak: Tvheadend-DVR
+        object : SwitchItem(
+            getString(R.string.tweak_tvheadend_dvr), getString(R.string.tweak_tvheadend_dvr),
+            getString(R.string.tweak_tvheadend_dvr_description),
+        ) {
+            override fun onUpdate() {
+                super.onUpdate()
+                setChecked(Tweaks.isTvheadendDvr(requireContext()))
+            }
+
+            override fun onSelected() {
+                super.onSelected()
+                Tweaks.setTvheadendDvr(requireContext(), isChecked)
+            }
+        },
     )
 }

@@ -23,6 +23,7 @@ import com.android.tv.dvr.data.RecordedProgram
 import com.android.tv.dvr.data.ScheduledRecording
 import com.android.tv.dvr.data.SeriesRecording
 import com.android.tv.util.Utils
+import com.android.tv.tweaks.htsdvr.HtsDvrTimers
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import javax.inject.Inject
@@ -245,6 +246,11 @@ class DvrManager @Inject constructor(@ApplicationContext context: Context) {
     /** Stopp an die Recorder weitergeben (jeweils auf ihrem Handler). */
     fun stopRecording(recording: ScheduledRecording) {
         if (!SoftPreconditions.checkState(dataManager.isDvrScheduleLoadFinished)) return
+        // Tweak: Tvheadend-DVR – laufende Server-Aufnahme über den Timer stoppen
+        if (HtsDvrTimers.isMirrored(recording.id)) {
+            HtsDvrTimers.removeTimer(appContext, recording)
+            return
+        }
         synchronized(listeners) {
             for ((l, h) in listeners) h.post { l.onStopRecordingRequested(recording) }
         }
@@ -254,7 +260,9 @@ class DvrManager @Inject constructor(@ApplicationContext context: Context) {
         Log.i(TAG, "Removing ${schedules.toList()}")
         if (!SoftPreconditions.checkState(dataManager.isDvrScheduleLoadFinished)) return
         for (r in schedules) {
-            if (r.state == ScheduledRecording.STATE_RECORDING_IN_PROGRESS) stopRecording(r) else dataManager.removeScheduledRecording(r)
+            // Tweak: Tvheadend-DVR – Server-Timer über den Provider löschen
+            if (HtsDvrTimers.isMirrored(r.id)) HtsDvrTimers.removeTimer(appContext, r)
+            else if (r.state == ScheduledRecording.STATE_RECORDING_IN_PROGRESS) stopRecording(r) else dataManager.removeScheduledRecording(r)
         }
     }
 
@@ -262,7 +270,9 @@ class DvrManager @Inject constructor(@ApplicationContext context: Context) {
         Log.i(TAG, "Force removing ${schedules.toList()}")
         if (!SoftPreconditions.checkState(dataManager.isDvrScheduleLoadFinished)) return
         for (r in schedules) {
-            if (r.state == ScheduledRecording.STATE_RECORDING_IN_PROGRESS) stopRecording(r) else dataManager.removeScheduledRecording(true, r)
+            // Tweak: Tvheadend-DVR – Server-Timer über den Provider löschen
+            if (HtsDvrTimers.isMirrored(r.id)) HtsDvrTimers.removeTimer(appContext, r)
+            else if (r.state == ScheduledRecording.STATE_RECORDING_IN_PROGRESS) stopRecording(r) else dataManager.removeScheduledRecording(true, r)
         }
     }
 

@@ -13,6 +13,8 @@
         <intent>
             <action android:name="android.media.tv.TvInputService" />
         </intent>
+        <!-- Tweak: Tvheadend-DVR – DVR-Provider des HTS-Plugins sichtbar machen -->
+        <provider android:authorities="com.gravarty.hts.dvr" />
     </queries>
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>

@@ -26,6 +26,7 @@ import com.android.tv.dvr.WritableDvrDataManager
 import com.android.tv.dvr.data.ScheduledRecording
 import com.android.tv.util.TvInputManagerHelper
 import com.android.tv.util.Utils
+import com.android.tv.tweaks.htsdvr.HtsDvr
 import java.util.concurrent.TimeUnit
 
 /**
@@ -126,6 +127,8 @@ class RecordingScheduler internal constructor(
         var needToUpdateAlarm = false
         for (s in schedules) {
             if (s.state != ScheduledRecording.STATE_RECORDING_NOT_STARTED) continue
+            // Tweak: Tvheadend-DVR – Aufnahmen des HTS-Plugins plant und startet der Server selbst
+            if (HtsDvr.isHtsInput(s.inputId)) continue
             if (startsWithin(s, SOON_DURATION_IN_MS)) scheduleRecordingSoon(s) else needToUpdateAlarm = true
         }
         if (needToUpdateAlarm) updateNextAlarm()

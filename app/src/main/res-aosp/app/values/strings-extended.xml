@@ -26,4 +26,7 @@
     <string name="tweak_confirm_exit_toast">Press again to exit.</string>
     <string name="tweak_play_resumes_trick_play">Play resumes after seeking</string>
     <string name="tweak_play_resumes_trick_play_description">While rewinding or fast-forwarding, Play/Pause resumes normal playback instead of pausing</string>
+    <string name="tweak_tvheadend_dvr">Tvheadend DVR</string>
+    <string name="tweak_tvheadend_dvr_description">Record via the Tvheadend server of the HTS plugin. Takes effect after restarting the app.</string>
+    <string name="tweak_tvheadend_dvr_error">Tvheadend server did not accept the change.</string>
 </resources>
