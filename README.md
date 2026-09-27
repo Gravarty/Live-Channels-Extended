@@ -51,6 +51,7 @@ cloud EPG, analytics, developer options. Channel lock with PIN and DVR are kept.
 - **Pause kept the player controls on screen:** While paused, the menu could not be closed without resuming playback. Now the controls hide after the normal timeout and Back closes them without resuming.
 - **Repeated TvProvider column check:** Without system rights the TvProvider never answers the series-ID column query, so the original retried it (two IPC calls under a lock) on every program query. It is now checked once per app start.
 - **"Recording History" not translated:** the DVR history card had no German translation in the original; added ("Aufnahmeverlauf").
+- **Guide key did nothing:** the remote's guide key only reached the pre-installed system TV app (global key). It now opens and closes the program guide in the app; vendor key codes are listed in `KeyHandler.GUIDE_KEYCODES` (currently also `KEYCODE_11` for JVC/Vestel).
 
 ### More bugs fixed from the original (selection)
 - Many crashes (NPE) on missing channels, programs, inputs or recordings, mainly in DVR, program guide and menu
