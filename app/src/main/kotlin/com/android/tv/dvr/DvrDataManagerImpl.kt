@@ -33,6 +33,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -195,13 +196,16 @@ class DvrDataManagerImpl @Inject constructor(
 
     private fun queryRecordedPrograms(uri: Uri?) {
         val dbDispatcher = TvSingletons.getSingletons(context).getDbDispatcher()
+        // Bugfix: erst nach der Zuweisung von job starten. Mit Main.immediate lief der Block sofort an und konnte
+        // job lesen, bevor er gesetzt war (UninitializedPropertyAccessException, wenn die Abfrage sehr schnell fertig war).
         lateinit var job: Job
-        job = scope.launch {
+        job = scope.launch(start = CoroutineStart.LAZY) {
             val result = withContext(dbDispatcher) { loadRecordedPrograms(uri ?: RecordedPrograms.CONTENT_URI) }
             pendingJobs.remove(job)
             onRecordedProgramsLoadedFinished(uri, result)
         }
         pendingJobs.add(job)
+        job.start()
     }
 
     /** Wie AsyncRecordedProgramQueryTask (inkl. series_id/state, falls vorhanden). */

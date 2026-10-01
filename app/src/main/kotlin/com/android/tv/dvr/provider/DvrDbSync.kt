@@ -23,6 +23,7 @@ import java.util.LinkedList
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -155,14 +156,17 @@ class DvrDbSync internal constructor(
             seriesRecordingScheduler.resumeUpdate()
             return
         }
+        // Bugfix: erst nach der Zuweisung von job starten. Mit Main.immediate lief der Block sofort an und konnte
+        // job lesen, bevor er gesetzt war (UninitializedPropertyAccessException, wenn die Abfrage sehr schnell fertig war).
         lateinit var job: Job
-        job = scope.launch {
+        job = scope.launch(start = CoroutineStart.LAZY) {
             val program = withContext(dbDispatcher) { ProgramQueries.queryProgram(context, programId) }
             if (queryProgramJob === job) queryProgramJob = null
             handleUpdateProgram(program, programId)
             startNextUpdateIfNeeded()
         }
         queryProgramJob = job
+        job.start()
     }
 
     /** Sendung weg → Aufnahme löschen; sonst Zeiten/Metadaten/Serie übernehmen. */

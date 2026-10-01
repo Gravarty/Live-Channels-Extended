@@ -10,6 +10,7 @@ import com.android.tv.TvSingletons
 import com.android.tv.common.util.CommonUtils
 import java.io.File
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -29,8 +30,10 @@ class DvrStorageStatusManager(private val context: Context) : RecordingStorageSt
 
     override fun cleanUpDbIfNeeded() {
         cleanUpJob?.cancel()
+        // Bugfix: erst nach der Zuweisung von job starten. Mit Main.immediate lief der Block sofort an und konnte
+        // job lesen, bevor er gesetzt war (UninitializedPropertyAccessException, wenn die Abfrage sehr schnell fertig war).
         lateinit var job: Job
-        job = scope.launch {
+        job = scope.launch(start = CoroutineStart.LAZY) {
             val forgetStorage = withContext(Dispatchers.IO) { cleanUp() }
             if (forgetStorage == true) {
                 val singletons = TvSingletons.getSingletons(context)
@@ -42,6 +45,7 @@ class DvrStorageStatusManager(private val context: Context) : RecordingStorageSt
             if (cleanUpJob === job) cleanUpJob = null
         }
         cleanUpJob = job
+        job.start()
     }
 
     private suspend fun cleanUp(): Boolean? {

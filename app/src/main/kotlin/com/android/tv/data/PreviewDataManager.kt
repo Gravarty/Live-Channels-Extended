@@ -15,6 +15,7 @@ import com.android.tv.common.util.PermissionUtils
 import com.android.tv.util.images.ImageLoader
 import java.util.concurrent.CopyOnWriteArraySet
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -54,8 +55,10 @@ class PreviewDataManager(context: Context) {
     /** Lädt vorhandene Vorschau-Kanäle/-Programme der App. */
     fun start() {
         if (queryPreviewJob != null) return
+        // Bugfix: erst nach der Zuweisung von job starten. Mit Main.immediate lief der Block sofort an und konnte
+        // job lesen, bevor er gesetzt war (UninitializedPropertyAccessException, wenn die Abfrage sehr schnell fertig war).
         lateinit var job: Job
-        job = scope.launch {
+        job = scope.launch(start = CoroutineStart.LAZY) {
             val result = withContext(Dispatchers.IO) { queryPreviewData() }
             if (queryPreviewJob === job) {
                 queryPreviewJob = null
@@ -65,6 +68,7 @@ class PreviewDataManager(context: Context) {
             }
         }
         queryPreviewJob = job
+        job.start()
     }
 
     fun stop() {
