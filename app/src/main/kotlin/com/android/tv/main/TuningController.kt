@@ -402,6 +402,16 @@ class TuningController(
         return if (current != null && activity.channelDataManager.isVisible(current)) current else channelTuner.getAdjacentBrowsableChannel(true)
     }
 
+    // Bugfix: Neuere Android-TV-Tuner melden beim Umschalten kurz "nicht verfügbar, Grund unbekannt", obwohl das
+    // Video gleich danach läuft. Die Meldung erscheint daher nur, wenn das Video nach kurzer Wartezeit noch fehlt.
+    private val delayedUnknownToast = Runnable {
+        if (!tvView.isVideoAvailable && tvView.currentChannel == channelTuner.currentChannel &&
+            tvView.videoUnavailableReason == TvInputManager.VIDEO_UNAVAILABLE_REASON_UNKNOWN
+        ) {
+            Toast.makeText(activity, R.string.msg_channel_unavailable_unknown, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun updateAvailabilityToast() {
         if (tvView.isVideoAvailable || tvView.currentChannel != channelTuner.currentChannel) return
         when (tvView.videoUnavailableReason) {
@@ -413,6 +423,11 @@ class TuningController(
             TvInputManager.VIDEO_UNAVAILABLE_REASON_WEAK_SIGNAL -> return
             CommonConstants.VIDEO_UNAVAILABLE_REASON_NOT_CONNECTED ->
                 Toast.makeText(activity, R.string.msg_channel_unavailable_not_connected, Toast.LENGTH_SHORT).show()
+            // Bugfix: Grund unbekannt erst nach der Wartezeit melden (siehe delayedUnknownToast)
+            TvInputManager.VIDEO_UNAVAILABLE_REASON_UNKNOWN -> {
+                tvView.removeCallbacks(delayedUnknownToast)
+                tvView.postDelayed(delayedUnknownToast, UNKNOWN_UNAVAILABLE_TOAST_DELAY_MS)
+            }
             else -> Toast.makeText(activity, R.string.msg_channel_unavailable_unknown, Toast.LENGTH_SHORT).show()
         }
     }
@@ -501,5 +516,7 @@ class TuningController(
     companion object {
         private const val TAG = "TuningController"
         private const val MAX_RECENT_CHANNELS = 5
+        // Bugfix: Wartezeit für die Meldung "Grund unbekannt"
+        private const val UNKNOWN_UNAVAILABLE_TOAST_DELAY_MS = 2000L
     }
 }

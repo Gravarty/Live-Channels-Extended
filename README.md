@@ -53,6 +53,7 @@ cloud EPG, analytics, developer options. Channel lock with PIN and DVR are kept.
 - **"Recording History" not translated:** the DVR history card had no German translation in the original; added ("Aufnahmeverlauf").
 - **Guide key did nothing:** the remote's guide key only reached the pre-installed system TV app (global key). It now opens and closes the program guide in the app; vendor key codes are listed in `KeyHandler.GUIDE_KEYCODES` (currently also `KEYCODE_11` for JVC/Vestel).
 - **Crash with recordings (`lateinit property job has not been initialized`):** background queries (DVR sync, recorded programs, storage cleanup, preview data) could finish so fast that their result handler ran before the job was assigned. The job now starts only after the assignment.
+- **"Video is unexpectedly unavailable" on every channel switch:** newer Android TV tuners briefly report "unavailable, reason unknown" while switching channels, although the video starts right after. The message now only appears if the video is still missing after 2 seconds.
 
 ### More bugs fixed from the original (selection)
 - Many crashes (NPE) on missing channels, programs, inputs or recordings, mainly in DVR, program guide and menu
